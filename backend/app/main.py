@@ -1,12 +1,17 @@
 # backend/app/main.py
 
+import sys
+sys.path.append('../')
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import uuid
 from datetime import datetime
+from .admin_backend import admin_main
+from database import database
 
 app = FastAPI()
+app.include_router(admin_main.router)
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -65,9 +70,11 @@ data_db = [
     }
 ]
 
+database.db_init()
+
 @app.get("/")
 def read_root():
-    return {"message": "Hello, FastAPI"}
+    return {"message": "Hello, FasAPI"}
 
 @app.post("/auth/login", response_model=UserResponse)
 def login(user: UserLogin):
