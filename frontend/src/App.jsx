@@ -1,56 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import ApiExample from './components/ApiExample.jsx'
+// src/App.jsx
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './components/HomePage';
+import LoginPage from './components/victim/LoginPage'; // パスはそのまま
+// 新しいコンポーネントをインポート
+import DashboardPage from './components/victim/DashboardPage';
+import RequestPage from './components/victim/RequestPage';
+import ConfirmPage from './components/victim/ConfirmPage';
+import CompletePage from './components/victim/CompletePage';
+import StatusPage from './components/victim/StatusPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [showApiExample, setShowApiExample] = useState(false)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React + Axios</h1>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
       
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-        
-        <button 
-          onClick={() => setShowApiExample(!showApiExample)}
-          style={{ 
-            marginTop: '20px', 
-            padding: '10px 20px', 
-            backgroundColor: '#646cff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer'
-          }}
-        >
-          {showApiExample ? 'Hide' : 'Show'} Axios API Example
-        </button>
-      </div>
-      
-      {showApiExample && <ApiExample />}
-      
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      {/* Victim側のルーティング */}
+      <Route path="/victim">
+        <Route path="login" element={<LoginPage />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="request" element={<RequestPage />} />
+        <Route path="confirm" element={<ConfirmPage />} />
+        <Route path="complete" element={<CompletePage />} />
+        <Route path="status" element={<StatusPage />} />
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;
