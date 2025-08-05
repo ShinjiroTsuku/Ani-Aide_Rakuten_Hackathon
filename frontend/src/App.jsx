@@ -9,6 +9,11 @@ import {
   Route,
   useNavigate,
 } from 'react-router-dom'
+import LoginPage from './components/Supporter/LoginPage.jsx'
+import SupporterReq from './components/Supporter/SupporterReq.jsx'
+import SupporterConfirm from './components/Supporter/SupporterConfirm.jsx'
+import CompletePage from './components/Supporter/CompletePage.jsx'
+
 
 // Define Home Page separately
 function HomePage() {
@@ -72,10 +77,6 @@ function HomePage() {
   )
 }
 
-// Dummy Login Page
-function LoginPage() {
-  return <h2>Login Page</h2>
-}
 
 // App component with router
 function App() {
@@ -84,6 +85,9 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/supporter/request" element={<SupporterReq />} />
+        <Route path="/supporter/confirm" element={<SupporterConfirm />} />
+        <Route path="/supporter/status" element={<CompletePage />} />
       </Routes>
     </BrowserRouter>
   )
