@@ -57,6 +57,86 @@
 #### フロントエンド（画面側）
 - **言語**: [未定]
 - **フレームワーク**: [未定]
+- 
+## 📁 プロジェクト構成
+
+```
+pet-disaster-support-platform/
+├── README.md
+├── .gitignore
+├── .env.example
+├── docs/                           # Documentation
+│   ├── api/                        # API documentation
+│   ├── design/                     # Design documents & wireframes
+│   └── deployment/                 # Deployment guides
+│
+├── frontend/                       # React application
+│   ├── public/
+│   │   ├── index.html
+│   │   └── favicon.ico
+│   ├── src/
+│   │   ├── components/             # Reusable UI components
+│   │   │   ├── common/             # Common components (Header, Footer, etc.)
+│   │   │   ├── forms/              # Form components
+│   │   │   └── ui/                 # UI library components
+│   │   ├── pages/                  # Page components
+│   │   │   ├── disaster-victim/    # Disaster victim pages
+│   │   │   ├── supporter/          # Supporter pages
+│   │   │   ├── admin/              # Admin dashboard pages
+│   │   │   └── auth/               # Authentication pages
+│   │   ├── hooks/                  # Custom React hooks
+│   │   ├── services/               # API services
+│   │   ├── utils/                  # Utility functions
+│   │   ├── constants/              # Constants and configurations
+│   │   ├── types/                  # TypeScript type definitions
+│   │   ├── styles/                 # Global styles and themes
+│   │   ├── assets/                 # Images, icons, fonts
+│   │   ├── context/                # React context providers
+│   │   ├── store/                  # State management (Redux/Zustand)
+│   │   ├── App.tsx
+│   │   └── index.tsx
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tsconfig.json
+│   ├── tailwind.config.js          # If using Tailwind CSS
+│   └── vite.config.ts              # If using Vite
+│
+├── backend/                        # FastAPI application
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py                 # FastAPI application entry point
+│   │   ├── config/                 # Configuration files
+│   │   ├── models/                 # Database models
+│   │   ├── schemas/                # Pydantic schemas
+│   │   ├── api/                    # API routes
+│   │   ├── services/               # Business logic
+│   │   ├── utils/                  # Utility functions
+│   │   ├── crud/                   # Database operations
+│   │   └── migrations/             # Database migrations (Alembic)
+│   │       └── versions/
+│   ├── tests/                      # Test files
+│   ├── requirements.txt
+│   └── requirements-dev.txt        # Development dependencies
+│
+├── database/                       # Database related files
+│   ├── init.sql                    # Initial database setup
+│   └── seeds/                      # Seed data for development
+│       ├── users.sql
+│       ├── shelters.sql
+│       └── sample_data.sql
+│
+├── scripts/                        # Deployment and utility scripts
+│   ├── deploy.sh
+│   ├── backup.sh
+│   ├── setup_dev.sh
+│   └── start_servers.sh            # Script to start both frontend and backend
+│
+└── .github/                        # GitHub Actions workflows
+    └── workflows/
+        ├── ci.yml                  # Continuous Integration
+        ├── cd.yml                  # Continuous Deployment
+        └── test.yml                # Test automation
+```
 
 #### バックエンド（API側）
 - **言語**: [未定]
