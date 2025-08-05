@@ -8,6 +8,14 @@ function App() {
   const [count, setCount] = useState(0)
   const [showApiExample, setShowApiExample] = useState(false)
 
+  const handleButtonHisaisyaClick = () => {
+    alert('Button A clicked!')
+  }
+
+  const handleButtonShiensyaClick = () => {
+    alert('Button A clicked!')
+  }
+
   return (
     <>
       <div>
@@ -27,6 +35,9 @@ function App() {
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
+
+        <button onClick={handleButtonHisaisyaClick}>被害者</button>
+        <button onClick={handleButtonShiensyaClick}>支援者</button>
         
         <button 
           onClick={() => setShowApiExample(!showApiExample)}
