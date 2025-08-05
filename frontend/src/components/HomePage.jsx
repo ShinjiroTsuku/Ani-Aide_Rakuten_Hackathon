@@ -13,7 +13,7 @@ function HomePage() {
 
 
   const handleButtonShiensyaClick = () => {
-    navigate('/login');
+    navigate('/supporter/login');
   };
 
   return (
