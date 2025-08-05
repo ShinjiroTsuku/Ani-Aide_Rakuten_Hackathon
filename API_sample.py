@@ -17,7 +17,8 @@ def index(request: Request, keyword: str = ""):
         params = {
             "format": "json",
             "applicationId": APP_ID,
-            "keyword": keyword
+            "keyword": keyword,
+            "genreId": 101213
         }
         response = requests.get(url, params=params)
         data = response.json()
