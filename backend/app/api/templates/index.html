@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>楽天APIテストページ</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #0073bb; }
+        form { margin-bottom: 20px; }
+        .item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; display: flex; align-items: center; }
+        .item img { max-width: 100px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>楽天API テストページ</h1>
+
+    <h2>1. 楽天市場 商品検索 API（カスタム）</h2>
+<form method="get" action="/">
+    <label>動物の種類:</label>
+    <select name="animal">
+        <option value="犬">犬</option>
+        <option value="猫">猫</option>
+        <option value="ハムスター">ハムスター</option>
+        <option value="インコ">インコ</option>
+    </select>
+
+    <label>支援カテゴリ:</label>
+    <select name="category">
+        <option value="">--選択してください--</option>
+        <option value="フード">食品（フード・水）</option>
+        <option value="サプリ 薬">健康（薬・サプリ）</option>
+        <option value="トイレ ケージ ベッド">日用品（トイレ・ケージなど）</option>
+        <option value="キャリーバッグ リード 迷子札">避難用品（キャリー・首輪）</option>
+        <option value="おもちゃ おやつ">ストレスケア（おやつ・おもちゃ）</option>
+    </select>
+
+    <button type="submit">検索</button>
+</form>
+
+
+    <h2>2. 楽天市場 商品ランキング API</h2>
+    <form method="get" action="/ranking">
+        <label>ジャンルID:</label>
+        <input type="number" name="genreId" value="100283">
+        <button type="submit">ランキングを見る</button>
+    </form>
+
+    <h2>3. 楽天市場 ジャンル検索 API</h2>
+    <form method="get" action="/genre">
+        <label>親ジャンルID:</label>
+        <input type="number" name="genreId" value="0">
+        <button type="submit">子ジャンルを表示</button>
+    </form>
+
+    <h2>4. 楽天市場 商品コード検索 API</h2>
+    <form method="get" action="/code">
+        <label>商品コード:</label>
+        <input type="text" name="itemCode" placeholder="例: book:12125604">
+        <button type="submit">検索</button>
+    </form>
+
+    <h2>5. 楽天市場 商品情報取得 API</h2>
+    <form method="get" action="/lookup">
+        <label>商品コード:</label>
+        <input type="text" name="itemCode" placeholder="例: book:12125604">
+        <button type="submit">詳細を取得</button>
+    </form>
+
+    <hr>
+    {% if keyword %}
+        <h2>検索結果: {{ keyword }}</h2>
+    {% endif %}
+
+    {% if results %}
+        {% for item in results %}
+            <div class="item">
+                {% if item.image %}
+                    <img src="{{ item.image }}" alt="商品画像">
+                {% endif %}
+                <div>
+                    <p><strong><a href="{{ item.url }}" target="_blank">{{ item.name }}</a></strong></p>
+                    <p>価格: ¥{{ '{:,}'.format(item.price) }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>商品が見つかりませんでした。</p>
+    {% endif %}
+</body>
+</html>
