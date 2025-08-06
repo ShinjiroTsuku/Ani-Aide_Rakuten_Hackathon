@@ -2,89 +2,189 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>楽天APIテストページ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ペット用品支援 検索</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1, h2 { color: #0073bb; }
-        form { margin-bottom: 20px; }
-        .item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; display: flex; align-items: center; }
-        .item img { max-width: 100px; margin-right: 10px; }
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .no-js #breed-selector-dog-container, .no-js #breed-selector-cat-container { display: none; }
+        #breed-selector-dog-container, #breed-selector-cat-container { display: none; }
     </style>
 </head>
-<body>
-    <h1>楽天API テストページ</h1>
+<body class="bg-gray-50 text-gray-800">
 
-    <h2>1. 楽天市場 商品検索 API（カスタム）</h2>
-<form method="get" action="/">
-    <label>動物の種類:</label>
-    <select name="animal">
-        <option value="犬">犬</option>
-        <option value="猫">猫</option>
-        <option value="ハムスター">ハムスター</option>
-        <option value="インコ">インコ</option>
-    </select>
+<div class="container mx-auto p-4 md:p-8">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-indigo-700">ペット用品支援 検索</h1>
+        <p class="text-gray-600 mt-2">楽天で見つかる、大切な家族のためのアイテム</p>
+    </header>
 
-    <label>支援カテゴリ:</label>
-    <select name="category">
-        <option value="">--選択してください--</option>
-        <option value="フード">食品（フード・水）</option>
-        <option value="サプリ 薬">健康（薬・サプリ）</option>
-        <option value="トイレ ケージ ベッド">日用品（トイレ・ケージなど）</option>
-        <option value="キャリーバッグ リード 迷子札">避難用品（キャリー・首輪）</option>
-        <option value="おもちゃ おやつ">ストレスケア（おやつ・おもちゃ）</option>
-    </select>
+    <div class="bg-white p-6 rounded-2xl shadow-lg mb-8">
+        <form id="search-form" action="/" method="get">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                <!-- 動物の種類 -->
+                <div>
+                    <label for="animal-selector" class="block text-sm font-medium text-gray-700 mb-2">動物の種類</label>
+                    <select id="animal-selector" name="animal" class="w-full p-3 border rounded-lg">
+                        <option value="">すべて</option>
+                        {% for animal in animal_types %}
+                        <option value="{{ animal }}" {% if animal == selected_animal %}selected{% endif %}>{{ animal }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <button type="submit">検索</button>
-</form>
+                <!-- 犬種 -->
+                <div id="breed-selector-dog-container">
+                    <label for="dog-breed-selector" class="block text-sm font-medium text-gray-700 mb-2">犬種</label>
+                    <select id="dog-breed-selector" name="breed" class="w-full p-3 border rounded-lg">
+                        <option value="">すべての犬種</option>
+                        {% for breed in dog_breeds %}
+                        <option value="{{ breed }}" {% if breed == selected_breed %}selected{% endif %}>{{ breed }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
+                <!-- 猫種 -->
+                <div id="breed-selector-cat-container">
+                    <label for="cat-breed-selector" class="block text-sm font-medium text-gray-700 mb-2">猫種</label>
+                    <select id="cat-breed-selector" name="breed" class="w-full p-3 border rounded-lg">
+                        <option value="">すべての猫種</option>
+                        {% for breed in cat_breeds %}
+                        <option value="{{ breed }}" {% if breed == selected_breed %}selected{% endif %}>{{ breed }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <h2>2. 楽天市場 商品ランキング API</h2>
-    <form method="get" action="/ranking">
-        <label>ジャンルID:</label>
-        <input type="number" name="genreId" value="100283">
-        <button type="submit">ランキングを見る</button>
-    </form>
+                <!-- 支援カテゴリ -->
+                <div>
+                    <label for="support-category-selector" class="block text-sm font-medium text-gray-700 mb-2">支援カテゴリ</label>
+                    <select id="support-category-selector" name="category" class="w-full p-3 border rounded-lg">
+                        <option value="">すべて</option>
+                        {% for key, value in support_categories.items() %}
+                        <option value="{{ key }}" {% if key == selected_category %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <h2>3. 楽天市場 ジャンル検索 API</h2>
-    <form method="get" action="/genre">
-        <label>親ジャンルID:</label>
-        <input type="number" name="genreId" value="0">
-        <button type="submit">子ジャンルを表示</button>
-    </form>
+                <!-- 並び順 -->
+                <div>
+                    <label for="sort-selector" class="block text-sm font-medium text-gray-700 mb-2">並び順</label>
+                    <select id="sort-selector" name="sort" class="w-full p-3 border rounded-lg">
+                        {% for key, value in sort_options.items() %}
+                        <option value="{{ key }}" {% if key == selected_sort %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <h2>4. 楽天市場 商品コード検索 API</h2>
-    <form method="get" action="/code">
-        <label>商品コード:</label>
-        <input type="text" name="itemCode" placeholder="例: book:12125604">
-        <button type="submit">検索</button>
-    </form>
+                <!-- フリーワード -->
+                <div class="md:col-span-2 lg:col-span-1">
+                    <label for="keyword-input" class="block text-sm font-medium text-gray-700 mb-2">キーワード</label>
+                    <input type="text" id="keyword-input" name="keyword" value="{{ input_keyword or '' }}" class="w-full p-3 border rounded-lg" placeholder="例: 高齢犬">
+                </div>
 
-    <h2>5. 楽天市場 商品情報取得 API</h2>
-    <form method="get" action="/lookup">
-        <label>商品コード:</label>
-        <input type="text" name="itemCode" placeholder="例: book:12125604">
-        <button type="submit">詳細を取得</button>
-    </form>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700">検索する</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-    <hr>
     {% if keyword %}
-        <h2>検索結果: {{ keyword }}</h2>
+    <div class="mb-6">
+        <h2 class="text-xl font-semibold">「<span class="text-indigo-600">{{ keyword }}</span>」の検索結果 <span class="text-lg text-gray-600">({{ results|length }}件)</span></h2>
+    </div>
     {% endif %}
 
     {% if results %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {% for item in results %}
-            <div class="item">
-                {% if item.image %}
-                    <img src="{{ item.image }}" alt="商品画像">
-                {% endif %}
-                <div>
-                    <p><strong><a href="{{ item.url }}" target="_blank">{{ item.name }}</a></strong></p>
-                    <p>価格: ¥{{ '{:,}'.format(item.price) }}</p>
+        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                <img src="{{ item.image }}" alt="{{ item.name }}" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="text-sm font-bold h-20 overflow-hidden">{{ item.name }}</h3>
+                    <p class="text-lg font-bold text-red-600 mt-2">¥{{ "{:,.0f}".format(item.price) }}</p>
+                    <p class="text-xs text-gray-500 mt-1 truncate">レビュー: {{ item.review_count }} / 評価: {{ "%.2f"|format(item.review_average|float) }} ★</p>
+                    <p class="text-xs text-gray-500 mt-1 truncate">ショップ: {{ item.shop }}</p>
                 </div>
-            </div>
+            </a>
+        </div>
         {% endfor %}
-    {% else %}
-        <p>商品が見つかりませんでした。</p>
+    </div>
+    {% elif keyword %}
+    <div class="text-center p-10 bg-white rounded-lg shadow">
+        <p class="text-gray-600">「{{ keyword }}」に一致する商品が見つかりませんでした。</p>
+        <p class="text-sm text-gray-500 mt-2">条件を変えて再検索してみてください。</p>
+    </div>
     {% endif %}
+
+    {% if suggested_results %}
+    <div class="mt-16">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-indigo-500 pl-4">こちらもいかがですか？</h2>
+        {% for cat_name, items in suggested_results.items() %}
+        <div class="mb-10">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">「{{ cat_name }}」カテゴリのおすすめ</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {% for item in items %}
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                        <img src="{{ item.image }}" alt="{{ item.name }}" class="w-full h-40 object-cover">
+                        <div class="p-4">
+                            <h4 class="text-sm font-semibold h-16 overflow-hidden">{{ item.name }}</h4>
+                            <p class="text-lg font-bold text-red-600 mt-2">¥{{ "{:,.0f}".format(item.price) }}</p>
+                            <p class="text-xs text-gray-500 mt-1 truncate">ショップ: {{ item.shop }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+<footer class="text-center py-8 text-sm text-gray-500">
+    <p>Powered by <a href="https://webservice.rakuten.co.jp/" target="_blank" class="text-indigo-600 hover:underline">Rakuten Web Service</a></p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.remove('no-js');
+    const animalSelector = document.getElementById('animal-selector');
+    const dogContainer = document.getElementById('breed-selector-dog-container');
+    const catContainer = document.getElementById('breed-selector-cat-container');
+    const dogSelect = document.getElementById('dog-breed-selector');
+    const catSelect = document.getElementById('cat-breed-selector');
+
+    function updateBreedSelectors() {
+        const selected = animalSelector.value;
+        if (selected === "犬") {
+            dogContainer.style.display = "block";
+            catContainer.style.display = "none";
+            dogSelect.name = "breed";
+            catSelect.name = "";
+        } else if (selected === "猫") {
+            dogContainer.style.display = "none";
+            catContainer.style.display = "block";
+            dogSelect.name = "";
+            catSelect.name = "breed";
+        } else {
+            dogContainer.style.display = "none";
+            catContainer.style.display = "none";
+            dogSelect.name = "";
+            catSelect.name = "";
+        }
+    }
+
+    updateBreedSelectors();
+    animalSelector.addEventListener("change", updateBreedSelectors);
+});
+</script>
+
 </body>
 </html>

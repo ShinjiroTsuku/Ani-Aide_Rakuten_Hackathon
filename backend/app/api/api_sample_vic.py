@@ -1,157 +1,132 @@
-from fastapi import FastAPI, Request, Query
+from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 import requests
+import random
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 APP_ID = "1037063463336645372"
 
-# -------------------------
-# 1. 楽天市場 商品検索 API
-# -------------------------
-@app.get("/", response_class=HTMLResponse)
-def search_items(
-    request: Request,
-    animal: str = "",
-    category: str = "",
-    keyword: str = "",
-):
-    # 動物＋カテゴリの組み合わせで検索キーワードを自動生成
-    combined_keyword = f"{animal} {category}".strip() if animal or category else keyword
+ANIMAL_TYPES = ["犬", "猫", "ハムスター", "インコ"]
+DOG_BREEDS = [
+    "柴犬", "トイプードル", "チワワ", "ミニチュアダックスフンド", "ポメラニアン", 
+    "ミニチュアシュナウザー", "フレンチブルドッグ", "ゴールデンレトリバー", "ラブラドールレトリバー", "シーズー"
+]
+CAT_BREEDS = [
+    "スコティッシュフォールド", "マンチカン", "アメリカンショートヘア", "ラグドール", "ブリティッシュショートヘア",
+    "ノルウェージャンフォレストキャット", "メインクーン", "ロシアンブルー", "ベンガル", "三毛猫"
+]
+SUPPORT_CATEGORIES = {
+    "フード 水": "食品（フード・水）",
+    "サプリ 薬": "健康（薬・サプリ）",
+    "トイレ ケージ ベッド": "日用品（トイレ・ケージなど）",
+    "キャリーバッグ リード 迷子札": "避難用品（キャリー・首輪）",
+    "おもちゃ おやつ": "ストレスケア（おやつ・おもちゃ）"
+}
+SORT_OPTIONS = {
+    "-reviewCount": "人気順",
+    "-itemPrice": "価格が高い順",
+    "+itemPrice": "価格が安い順",
+    "-updateTimestamp": "新着順",
+}
 
-    results = []
-    if combined_keyword:
-        url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706"
-        params = {
-            "format": "json",
-            "applicationId": APP_ID,
-            "keyword": combined_keyword,
-            "sort": "-reviewCount",  # 人気順
-            "hits": 30
-        }
+def get_base_context():
+    return {
+        "animal_types": ANIMAL_TYPES,
+        "dog_breeds": DOG_BREEDS,
+        "cat_breeds": CAT_BREEDS,
+        "support_categories": SUPPORT_CATEGORIES,
+        "sort_options": SORT_OPTIONS,
+        "results": [],
+        "suggested_results": {},
+        "keyword": "",
+        "selected_animal": "",
+        "selected_breed": "",
+        "selected_category": "",
+        "input_keyword": "",
+        "selected_sort": "-reviewCount",
+    }
+
+def fetch_rakuten_items(params: dict):
+    url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706"
+    items = []
+    try:
         response = requests.get(url, params=params)
+        response.raise_for_status()
         data = response.json()
         for item in data.get("Items", []):
             info = item["Item"]
-            results.append({
+            items.append({
                 "name": info["itemName"],
                 "url": info["itemUrl"],
-                "image": info["mediumImageUrls"][0]["imageUrl"] if info["mediumImageUrls"] else None,
-                "price": info["itemPrice"]
+                "image": info["mediumImageUrls"][0]["imageUrl"].replace("?_ex=128x128", "") if info.get("mediumImageUrls") else "https://placehold.co/128x128/eee/ccc?text=No+Image",
+                "price": info["itemPrice"],
+                "shop": info["shopName"],
+                "review_count": info.get("reviewCount", 0),
+                "review_average": float(info.get("reviewAverage", 0))
             })
+    except requests.exceptions.RequestException as e:
+        print(f"APIリクエストエラー: {e}")
+    except Exception as e:
+        print(f"予期せぬエラー: {e}")
+    return items
 
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "results": results,
-        "keyword": combined_keyword
-    })
+@app.get("/", response_class=HTMLResponse)
+async def search_items(
+    request: Request,
+    animal: str = "",
+    breed: str = "",
+    category: str = "",
+    keyword: str = "",
+    sort: str = "-reviewCount",
+):
+    context = get_base_context()
+    context["request"] = request
 
-
-
-# -------------------------
-# 2. 楽天市場 商品ランキング API
-# -------------------------
-@app.get("/ranking", response_class=HTMLResponse)
-def get_ranking(request: Request, genreId: int = 100283):
-    url = "https://app.rakuten.co.jp/services/api/IchibaItem/Ranking/20170628"
-    params = {"format": "json", "applicationId": APP_ID, "genreId": genreId}
-    response = requests.get(url, params=params)
-    data = response.json()
-
-    results = []
-    for item in data.get("Items", []):
-        info = item["Item"]
-        results.append({
-            "name": info["itemName"],
-            "url": info["itemUrl"],
-            "image": info["mediumImageUrls"][0]["imageUrl"] if info["mediumImageUrls"] else None,
-            "price": info["itemPrice"]
-        })
-
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "results": results,
-        "keyword": f"ジャンルID: {genreId}"
-    })
-
-
-# -------------------------
-# 3. 楽天市場 ジャンル検索 API
-# -------------------------
-@app.get("/genre", response_class=HTMLResponse)
-def get_genres(request: Request, genreId: int = 0):
-    url = "https://app.rakuten.co.jp/services/api/IchibaGenre/Search/20140222"
-    params = {"format": "json", "applicationId": APP_ID, "genreId": genreId}
-    response = requests.get(url, params=params)
-    data = response.json()
-
-    genres = []
-    for genre in data.get("children", []):
-        genre_info = genre["child"]
-        genres.append({
-            "id": genre_info["genreId"],
-            "name": genre_info["genreName"],
-            "path": genre_info["genreNamePath"]
-        })
-
-    return templates.TemplateResponse("genre.html", {
-        "request": request,
-        "genres": genres,
-        "genreId": genreId
-    })
-
-
-# -------------------------
-# 4. 楽天市場 商品コード検索 API
-# -------------------------
-@app.get("/code", response_class=HTMLResponse)
-def get_item_by_code(request: Request, itemCode: str = Query(...)):
-    url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706"
-    params = {"format": "json", "applicationId": APP_ID, "itemCode": itemCode}
-    response = requests.get(url, params=params)
-    data = response.json()
+    search_parts = [animal, breed, category, keyword]
+    combined_keyword = " ".join(part for part in search_parts if part).strip()
 
     results = []
-    for item in data.get("Items", []):
-        info = item["Item"]
-        results.append({
-            "name": info["itemName"],
-            "url": info["itemUrl"],
-            "image": info["mediumImageUrls"][0]["imageUrl"] if info["mediumImageUrls"] else None,
-            "price": info["itemPrice"]
-        })
+    suggested_results = {}
 
-    return templates.TemplateResponse("index.html", {
-        "request": request,
+    if combined_keyword:
+        main_hits = 30
+
+        main_params = {
+            "format": "json", "applicationId": APP_ID, "keyword": combined_keyword,
+            "sort": sort, "hits": main_hits
+        }
+        results = fetch_rakuten_items(main_params)
+
+        if category:
+            all_category_keys = list(SUPPORT_CATEGORIES.keys())
+            other_categories = [cat for cat in all_category_keys if cat != category]
+            suggestions_to_fetch = random.sample(other_categories, k=min(len(other_categories), 2))
+
+            for suggested_cat_key in suggestions_to_fetch:
+                suggested_keyword = " ".join(part for part in [animal, breed, suggested_cat_key] if part).strip()
+                if not suggested_keyword: continue
+
+                suggest_params = {
+                    "format": "json", "applicationId": APP_ID, "keyword": suggested_keyword,
+                    "sort": "-reviewCount", "hits": 3
+                }
+                suggested_items = fetch_rakuten_items(suggest_params)
+
+                if suggested_items:
+                    suggested_results[SUPPORT_CATEGORIES[suggested_cat_key]] = suggested_items
+
+    context.update({
         "results": results,
-        "keyword": f"商品コード: {itemCode}"
+        "suggested_results": suggested_results,
+        "keyword": combined_keyword,
+        "selected_animal": animal,
+        "selected_breed": breed,
+        "selected_category": category,
+        "input_keyword": keyword,
+        "selected_sort": sort,
     })
 
-
-# -------------------------
-# 5. 楽天市場 商品情報取得 API
-# -------------------------
-@app.get("/lookup", response_class=HTMLResponse)
-def lookup_item(request: Request, itemCode: str = Query(...)):
-    url = "https://app.rakuten.co.jp/services/api/IchibaItem/ItemLookup/20170426"
-    params = {"format": "json", "applicationId": APP_ID, "itemCode": itemCode}
-    response = requests.get(url, params=params)
-    data = response.json()
-
-    results = []
-    for item in data.get("Items", []):
-        info = item["Item"]
-        results.append({
-            "name": info["itemName"],
-            "url": info["itemUrl"],
-            "image": info["mediumImageUrls"][0]["imageUrl"] if info["mediumImageUrls"] else None,
-            "price": info["itemPrice"]
-        })
-
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "results": results,
-        "keyword": f"Lookup: {itemCode}"
-    })
+    return templates.TemplateResponse("index.html", context)
