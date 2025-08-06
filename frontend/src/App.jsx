@@ -12,7 +12,9 @@ import SupporterLoginPage from './components/Supporter/LoginPage.jsx'
 import SupporterReq from './components/Supporter/SupporterReq.jsx'
 import SupporterConfirm from './components/Supporter/SupporterConfirm.jsx'
 import SupporterCompletePage from './components/Supporter/CompletePage.jsx'
-
+// Admin components
+import AdminLogin from './components/Admin/AdminLogin.jsx'
+import AdminDashboard from './components/Admin/AdminDashboaed.jsx'
 
 function App() {
   return (
@@ -28,11 +30,19 @@ function App() {
         <Route path="complete" element={<CompletePage />} />
         <Route path="status" element={<StatusPage />} />
       </Route>
+      
+      {/* Supporter側のルーティング */}
       <Route path="/supporter">
         <Route path="login" element={<SupporterLoginPage />} />
         <Route path="request" element={<SupporterReq />} />
         <Route path="confirm" element={<SupporterConfirm />} />
         <Route path="status" element={<SupporterCompletePage />} />
+      </Route>
+      
+      {/* Admin側のルーティング */}
+      <Route path="/admin">
+        <Route path="login" element={<AdminLogin />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
       </Route>
     </Routes>
   );

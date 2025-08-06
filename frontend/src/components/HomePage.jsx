@@ -10,10 +10,12 @@ function HomePage() {
   const [showApiExample, setShowApiExample] = useState(false);
   const navigate = useNavigate();
 
-
-
   const handleButtonShiensyaClick = () => {
     navigate('/supporter/login');
+  };
+
+  const handleButtonAdminClick = () => {
+    navigate('/admin/login');
   };
 
   return (
@@ -38,6 +40,7 @@ function HomePage() {
           <button>被災者</button>
         </Link>
         <button onClick={handleButtonShiensyaClick}>支援者</button>
+        <button onClick={handleButtonAdminClick}>管理者</button>
         <button
           onClick={() => setShowApiExample(!showApiExample)}
           style={{
