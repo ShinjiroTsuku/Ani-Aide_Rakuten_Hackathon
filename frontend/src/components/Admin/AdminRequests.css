@@ -1,6 +1,6 @@
 .admin-requests {
   padding: 20px;
-  background: #f8f9fa;
+  background: #fef7f7;
   min-height: 100%;
 }
 
@@ -15,7 +15,7 @@
 
 .requests-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: #E60012;
   font-size: 24px;
   font-weight: 600;
 }
@@ -38,8 +38,8 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  border-color: #E60012;
+  box-shadow: 0 0 0 2px rgba(230, 0, 18, 0.2);
 }
 
 .status-filter {
@@ -65,11 +65,11 @@
 }
 
 .requests-table th {
-  background: #f8f9fa;
+  background: #ffe6e6;
   padding: 15px;
   text-align: left;
   font-weight: 600;
-  color: #2c3e50;
+  color: #E60012;
   border-bottom: 1px solid #e1e5e9;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .requests-table tr:hover {
-  background: #f8f9fa;
+  background: #ffe6e6;
 }
 
 .description {
@@ -155,12 +155,12 @@
 }
 
 .btn-view {
-  background: #3498db;
+  background: #E60012;
   color: white;
 }
 
 .btn-view:hover {
-  background: #2980b9;
+  background: #cc0010;
 }
 
 .btn-edit {
@@ -200,7 +200,7 @@
   display: block;
   font-size: 32px;
   font-weight: 700;
-  color: #3498db;
+  color: #E60012;
   margin-bottom: 5px;
 }
 

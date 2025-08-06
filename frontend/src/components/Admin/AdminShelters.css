@@ -1,6 +1,6 @@
 .admin-shelters {
   padding: 20px;
-  background: #f8f9fa;
+  background: #fef7f7;
   min-height: 100%;
 }
 
@@ -15,7 +15,7 @@
 
 .shelters-header h2 {
   margin: 0;
-  color: #2c3e50;
+  color: #E60012;
   font-size: 24px;
   font-weight: 600;
 }
@@ -27,7 +27,7 @@
 
 .btn-add {
   padding: 12px 20px;
-  background: #27ae60;
+  background: #E60012;
   color: white;
   border: none;
   border-radius: 6px;
@@ -38,7 +38,7 @@
 }
 
 .btn-add:hover {
-  background: #229954;
+  background: #cc0010;
   transform: translateY(-1px);
 }
 
@@ -52,7 +52,7 @@
 
 .add-shelter-form h3 {
   margin: 0 0 20px 0;
-  color: #2c3e50;
+  color: #E60012;
   font-size: 18px;
   font-weight: 600;
 }
@@ -72,7 +72,7 @@
 .form-group label {
   margin-bottom: 8px;
   font-weight: 500;
-  color: #2c3e50;
+  color: #E60012;
   font-size: 14px;
 }
 
@@ -86,8 +86,8 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  border-color: #E60012;
+  box-shadow: 0 0 0 2px rgba(230, 0, 18, 0.2);
 }
 
 .form-actions {
@@ -99,7 +99,7 @@
 
 .btn-save {
   padding: 12px 24px;
-  background: #3498db;
+  background: #E60012;
   color: white;
   border: none;
   border-radius: 6px;
@@ -110,7 +110,7 @@
 }
 
 .btn-save:hover {
-  background: #2980b9;
+  background: #cc0010;
 }
 
 .btn-cancel {
@@ -148,8 +148,8 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  border-color: #E60012;
+  box-shadow: 0 0 0 2px rgba(230, 0, 18, 0.2);
 }
 
 .status-filter {
@@ -190,7 +190,7 @@
 
 .shelter-header h3 {
   margin: 0;
-  color: #2c3e50;
+  color: #E60012;
   font-size: 18px;
   font-weight: 600;
 }
@@ -229,7 +229,7 @@
 }
 
 .shelter-info strong {
-  color: #2c3e50;
+  color: #E60012;
 }
 
 .occupancy-info {
@@ -303,12 +303,12 @@
 }
 
 .btn-details {
-  background: #3498db;
+  background: #E60012;
   color: white;
 }
 
 .btn-details:hover {
-  background: #2980b9;
+  background: #cc0010;
 }
 
 .shelter-footer {
@@ -330,7 +330,7 @@
 
 .summary-card h3 {
   margin: 0 0 20px 0;
-  color: #2c3e50;
+  color: #E60012;
   font-size: 18px;
   font-weight: 600;
 }
@@ -349,7 +349,7 @@
   display: block;
   font-size: 32px;
   font-weight: 700;
-  color: #3498db;
+  color: #E60012;
   margin-bottom: 5px;
 }
 
