@@ -14,7 +14,7 @@ import SupporterConfirm from './components/Supporter/SupporterConfirm.jsx'
 import SupporterCompletePage from './components/Supporter/CompletePage.jsx'
 // Admin components
 import AdminLogin from './components/Admin/AdminLogin.jsx'
-import AdminDashboard from './components/Admin/AdminDashboaed.jsx'
+import AdminDashboard from './components/Admin/AdminDashboard.jsx'
 
 function App() {
   return (
