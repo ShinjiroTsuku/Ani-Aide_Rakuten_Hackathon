@@ -20,7 +20,6 @@ def login(request: LoginRequest):
     if not password:
         raise HTTPException(status_code=401, detail="Invalid email or password")
     else:
-        print(list(password[0])[0])
         if request.password == list(password[0])[0]:
             return {"success": True, "message": "Login successful"}
         else:
