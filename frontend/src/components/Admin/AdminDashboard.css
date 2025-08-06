@@ -1,13 +1,13 @@
 .admin-dashboard {
     display: flex;
     height: 100vh;
-    background: #f8f9fa;
+    background: #fef7f7;
   }
   
   /* Sidebar Styles */
   .sidebar {
     width: 280px;
-    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    background: linear-gradient(180deg, #E60012 0%, #cc0010 100%);
     color: white;
     transition: width 0.3s ease;
     overflow: hidden;
@@ -19,7 +19,7 @@
   
   .sidebar-header {
     padding: 20px;
-    border-bottom: 1px solid #34495e;
+    border-bottom: 1px solid #cc0010;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -55,7 +55,7 @@
     padding: 15px 20px;
     background: transparent;
     border: none;
-    color: #bdc3c7;
+    color: #f0f0f0;
     text-align: left;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -71,9 +71,9 @@
   }
   
   .nav-item.active {
-    background: rgba(52, 152, 219, 0.3);
+    background: rgba(255, 255, 255, 0.2);
     color: white;
-    border-left: 4px solid #3498db;
+    border-left: 4px solid #ffffff;
   }
   
   /* Main Content Styles */
@@ -98,7 +98,7 @@
     margin: 0;
     font-size: 24px;
     font-weight: 600;
-    color: #2c3e50;
+    color: #E60012;
   }
   
   .header-right {
@@ -119,7 +119,7 @@
   }
   
   .logout-btn {
-    background: #e74c3c;
+    background: #E60012;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -130,7 +130,7 @@
   }
   
   .logout-btn:hover {
-    background: #c0392b;
+    background: #cc0010;
   }
   
   /* Content Area */
@@ -177,7 +177,7 @@
     margin: 0 0 5px 0;
     font-size: 36px;
     font-weight: 700;
-    color: #2c3e50;
+    color: #E60012;
   }
   
   .stat-label {
@@ -196,7 +196,7 @@
   
   .recent-requests h3 {
     margin: 0 0 20px 0;
-    color: #2c3e50;
+    color: #E60012;
     font-size: 20px;
     font-weight: 600;
   }
@@ -218,9 +218,9 @@
   }
   
   .requests-table th {
-    background: #f8f9fa;
+    background: #ffe6e6;
     font-weight: 600;
-    color: #2c3e50;
+    color: #E60012;
     font-size: 14px;
   }
   
@@ -238,18 +238,18 @@
   }
   
   .status-badge.pending {
-    background: #fff3cd;
-    color: #856404;
+    background: #ffe6cc;
+    color: #cc6600;
   }
   
   .status-badge.completed {
-    background: #d4edda;
-    color: #155724;
+    background: #e6ffe6;
+    color: #006600;
   }
   
   .status-badge.in-progress {
-    background: #cce5ff;
-    color: #004085;
+    background: #e6f3ff;
+    color: #0066cc;
   }
   
   /* Management Sections */
@@ -268,7 +268,7 @@
   .reports-section h2,
   .settings-section h2 {
     margin: 0 0 10px 0;
-    color: #2c3e50;
+    color: #E60012;
     font-size: 24px;
     font-weight: 600;
   }
