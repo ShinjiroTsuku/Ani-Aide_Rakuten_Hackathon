@@ -25,9 +25,11 @@ function AdminDashboard({ adminUser, onLogout }) {
   }
 
   const mockRecentRequests = [
-    { id: 1, shelter: '避難所A', item: 'ペットフード', quantity: '10kg', status: 'pending', date: '2024-01-15' },
-    { id: 2, shelter: '避難所B', item: '薬品', quantity: '5箱', status: 'completed', date: '2024-01-14' },
-    { id: 3, shelter: '避難所C', item: '衛生用品', quantity: '20個', status: 'in-progress', date: '2024-01-13' }
+    { id: 1, location: '東京都', shelter: '避難所A', petType: '猫', item: 'ペットフード', quantity: '10kg', status: 'pending', date: '2024-01-15' },
+    { id: 2, location: '大阪府', shelter: '避難所B', petType: '犬', item: '薬品', quantity: '5箱', status: 'completed', date: '2024-01-14' },
+    { id: 3, location: '福岡県', shelter: '避難所C', petType: '猫', item: '衛生用品', quantity: '20個', status: 'in-progress', date: '2024-01-13' },
+    { id: 4, location: '北海道', shelter: '避難所D', petType: '犬', item: '毛布', quantity: '15枚', status: 'pending', date: '2024-01-12' },
+    { id: 5, location: '沖縄県', shelter: '避難所E', petType: 'その他', item: 'ケージ', quantity: '8個', status: 'completed', date: '2024-01-11' }
   ]
 
   // Render dashboard content based on active tab
@@ -65,7 +67,9 @@ function AdminDashboard({ adminUser, onLogout }) {
                 <table>
                   <thead>
                     <tr>
+                      <th>所在地 / Location</th>
                       <th>避難所 / Shelter</th>
+                      <th>ペット種類 / Pet Type</th>
                       <th>物品 / Item</th>
                       <th>数量 / Quantity</th>
                       <th>状態 / Status</th>
@@ -75,7 +79,9 @@ function AdminDashboard({ adminUser, onLogout }) {
                   <tbody>
                     {mockRecentRequests.map(request => (
                       <tr key={request.id}>
+                        <td>{request.location}</td>
                         <td>{request.shelter}</td>
+                        <td>{request.petType}</td>
                         <td>{request.item}</td>
                         <td>{request.quantity}</td>
                         <td>
