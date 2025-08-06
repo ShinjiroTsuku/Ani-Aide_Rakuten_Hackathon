@@ -1,15 +1,62 @@
 // frontend/src/components/victim/LoginPage.jsx
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
+  const [email, setEmail] = useState(''); // ★UserIDからEmailに変更
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); // ★エラーメッセージ用のStateを追加
+  
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    // ★認証チェック
+    if (email === 'hanako@example.com' && password === 'cde123') {
+      // ログイン成功
+      console.log("ログイン成功");
+      setError('');
+      navigate('/victim/dashboard');
+    } else {
+      // ログイン失敗
+      console.log("ログイン失敗");
+      setError('IDまたはパスワードが間違っています。');
+    }
+  };
+
   return (
-    <div>
+    <div style={{ padding: '2rem' }}>
       <h2>被災者向けログイン画面</h2>
       <p>IDとパスワードを入力してください。</p>
-      <Link to="/victim/dashboard">
-        <button>Dashboard画面へ</button>
-      </Link>
+      
+      <form onSubmit={handleLogin}>
+        <div>
+          <label>Email:</label><br />
+          <input 
+            type="email" // ★typeを"email"に戻す
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required 
+          />
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <label>Password:</label><br />
+          <input 
+            type="password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required 
+          />
+        </div>
+        
+        {/* ★エラーメッセージの表示 */}
+        {error && <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>}
+        
+        <button type="submit" style={{ marginTop: '1.5rem' }}>
+          ログイン
+        </button>
+      </form>
     </div>
   );
 }
