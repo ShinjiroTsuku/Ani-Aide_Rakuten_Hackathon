@@ -1,12 +1,11 @@
-// frontend/src/components/victim/LoginPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
-  const [email, setEmail] = useState(''); // ★UserIDからEmailに変更
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(''); // ★EmailをStateで管理
+  const [password, setPassword] = useState(''); // ★PasswordをStateで管理
   const [error, setError] = useState(''); // ★エラーメッセージ用のStateを追加
-  
+
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
@@ -17,25 +16,23 @@ function LoginPage() {
       // ログイン成功
       console.log("ログイン成功");
       setError('');
-      navigate('/victim/dashboard');
+      navigate('/supporter/request');
     } else {
       // ログイン失敗
       console.log("ログイン失敗");
-      setError('IDまたはパスワードが間違っています。');
+      setError('Emailまたはパスワードが間違っています。');
     }
   };
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h2>被災者向けログイン画面</h2>
-      <p>IDとパスワードを入力してください。</p>
-      
+      <h2>支援者ログイン</h2>
       <form onSubmit={handleLogin}>
         <div>
           <label>Email:</label><br />
           <input 
-            type="email" // ★typeを"email"に戻す
-            value={email}
+            type="email"
+            value={email} // ★valueとonChangeを追加
             onChange={(e) => setEmail(e.target.value)}
             required 
           />
@@ -43,8 +40,8 @@ function LoginPage() {
         <div style={{ marginTop: '1rem' }}>
           <label>Password:</label><br />
           <input 
-            type="password" 
-            value={password}
+            type="password"
+            value={password} // ★valueとonChangeを追加
             onChange={(e) => setPassword(e.target.value)}
             required 
           />
