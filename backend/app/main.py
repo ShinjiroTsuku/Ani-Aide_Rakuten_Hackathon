@@ -9,19 +9,23 @@ import uuid
 from datetime import datetime
 from .admin_backend import admin_main
 from database import database
+from app.api import login as supporter_login
+
 
 app = FastAPI()
 app.include_router(admin_main.router)
+app.include_router(supporter_login.router, prefix="/supporter")
 
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # Or specify http://localhost:5173
+    allow_origins=["http://localhost:5173"],   # Or specify http://localhost:5173
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Data models
 class UserLogin(BaseModel):

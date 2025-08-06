@@ -1,27 +1,68 @@
+// src/components/Supporter/LoginPage.jsx (or your path)
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function LoginPage() {
+export default function LoginPage() {
   const navigate = useNavigate()
+  const [usernameOrEmail, setUsernameOrEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
-  const handleLogin = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
 
-    // For now, just navigate without backend check
-    navigate('/supporter/request')
+    try {
+      const res = await fetch('http://localhost:8000/supporter/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username_or_email: usernameOrEmail,
+          password: password,
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.detail || 'Login failed')
+        return
+      }
+
+      navigate('/supporter/request') // success → go to supporter page
+    } catch (err) {
+      setError('Network error')
+      console.error(err)
+    }
   }
 
   return (
     <div style={{ padding: '2rem' }}>
       <h2>支援者ログイン</h2>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleSubmit}>
         <div>
-          <label>Email:</label><br />
-          <input type="email" required />
+          <label>ユーザー名またはメール:</label><br />
+          <input
+            type="text"
+            value={usernameOrEmail}
+            onChange={(e) => setUsernameOrEmail(e.target.value)}
+            required
+          />
         </div>
+
         <div style={{ marginTop: '1rem' }}>
-          <label>Password:</label><br />
-          <input type="password" required />
+          <label>パスワード:</label><br />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
+
+        {error && (
+          <p style={{ color: 'red', marginTop: '0.75rem' }}>{error}</p>
+        )}
+
         <button type="submit" style={{ marginTop: '1.5rem' }}>
           ログイン
         </button>
@@ -29,5 +70,3 @@ function LoginPage() {
     </div>
   )
 }
-
-export default LoginPage
