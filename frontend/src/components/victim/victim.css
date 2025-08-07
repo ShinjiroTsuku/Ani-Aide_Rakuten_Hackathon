@@ -1,0 +1,236 @@
+/* ベースレイアウト */
+.victim-dashboard {
+  display: flex;
+  height: 100vh;
+  background: #fef7f7; /* 支援者ページと同じ背景色 */
+}
+
+.victim-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ヘッダー */
+.victim-dashboard-header {
+  background: white;
+  padding: 20px 30px;
+  border-bottom: 1px solid #e1e5e9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.victim-dashboard-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #E60012; /* 支援者ページと同じ赤色 */
+}
+
+.victim-user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.victim-user-info span {
+  color: #666;
+  font-size: 14px;
+}
+
+.victim-logout-btn {
+  background: #E60012; /* 支援者ページと同じ赤色 */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.victim-logout-btn:hover {
+  background: #cc0010; /* 支援者ページと同じホバー時の色 */
+}
+
+/* コンテンツエリア */
+.victim-content-area {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* ダッシュボードカード */
+.victim-dashboard-card {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.victim-dashboard-card h2 {
+  color: #E60012; /* 支援者ページと同じ赤色 */
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.victim-dashboard-card .welcome-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.victim-dashboard-card .description {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* アクションボタン */
+.victim-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.victim-btn-primary {
+  padding: 12px 30px;
+  background: #E60012; /* 支援者ページと同じ赤色 */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.victim-btn-primary:hover {
+  background: #cc0010; /* 支援者ページと同じホバー時の色 */
+}
+
+.victim-btn-secondary {
+  padding: 12px 30px;
+  background: white;
+  color: #E60012; /* 支援者ページと同じ赤色 */
+  border: 2px solid #E60012;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.victim-btn-secondary:hover {
+  background: #E60012; /* 支援者ページと同じホバー時の色 */
+  color: white;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+  .victim-dashboard-header {
+    padding: 15px 20px;
+  }
+  
+  .victim-content-area {
+    padding: 20px;
+  }
+  
+  .victim-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .victim-dashboard-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .victim-content-area {
+    padding: 15px;
+  }
+}
+
+/* ダッシュボードカードに追加するスタイル */
+.victim-dashboard-card {
+  /* 既存のスタイル... */
+  margin-bottom: 30px; /* 以下の表との間隔を空ける */
+}
+
+/* 最近の要請カード */
+.victim-recent-requests-card {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.victim-recent-requests-card h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e1e5e9;
+  padding-bottom: 10px;
+}
+
+/* テーブルスタイル */
+.victim-table-container {
+  overflow-x: auto;
+}
+
+.victim-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.victim-table-container th,
+.victim-table-container td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e1e5e9;
+  white-space: nowrap; /* テキストが折り返されないようにする */
+}
+
+.victim-table-container th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #666;
+}
+
+.victim-table-container tr:last-child td {
+  border-bottom: none;
+}
+
+/* 状態バッジ */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-completed {
+  background-color: #e6f7e9;
+  color: #28a745;
+}
+
+.status-pending {
+  background-color: #fff3e5;
+  color: #ff9800;
+}
