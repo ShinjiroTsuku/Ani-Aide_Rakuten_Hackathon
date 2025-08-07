@@ -1,12 +1,16 @@
-// src/pages/SupporterConfirm.jsx
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom';
 
-function SupporterConfirm() {
-  const navigate = useNavigate()
+export default function SupporterConfirm() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const selectedItems = location.state?.selectedItems || [];
+
+  const total = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleConfirm = () => {
     navigate('/supporter/status?status=success') // 完了ページへ
   }
+
 
   const handleBack = () => {
     navigate('/supporter/request')
@@ -14,22 +18,24 @@ function SupporterConfirm() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>支援内容確認</h2>
+      <div style={styles.container}>
+        <h2 style={styles.title}>支援内容の確認</h2>
 
-        <div style={styles.block}>
-          <p style={styles.label}>支援品目</p>
-          <p style={styles.value}>ドッグフード（10kg × 1）</p>
-        </div>
-
-        <div style={styles.block}>
-          <p style={styles.label}>合計金額</p>
-          <p style={styles.value}>¥4,500</p>
-        </div>
-
-        <p style={styles.helperText}>
-          内容をご確認のうえ「要請する」を押してください。
-        </p>
+        {selectedItems.length === 0 ? (
+          <p style={styles.empty}>選択された商品がありません。</p>
+        ) : (
+          <div style={styles.list}>
+            {selectedItems.map((item) => (
+              <div key={item.product_id} style={styles.itemRow}>
+                <span style={styles.itemName}>{item.name}</span>
+                <span style={styles.itemQty}>{item.quantity}個</span>
+              </div>
+            ))}
+            <div style={styles.totalRow}>
+              合計金額: <strong style={{ color: '#000' }}>{yen(total)}</strong>
+            </div>
+          </div>
+        )}
 
         <div style={styles.actions}>
           <button type="button" onClick={handleConfirm} style={styles.primaryBtn}>
@@ -41,95 +47,52 @@ function SupporterConfirm() {
         </div>
       </div>
     </div>
-  )
+  );
+}
+
+function yen(n) {
+  try {
+    return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(n)
+  } catch {
+    return `¥${Number(n || 0).toLocaleString()}`
+  }
 }
 
 const styles = {
-  // Full-bleed red background
   page: {
-    minHeight: '100vh',
-    width: '100vw',
-    backgroundColor: '#BF0000',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '24px',
+    minHeight: '100vh', backgroundColor: '#BF0000', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: 32,
   },
-  // White card
-  card: {
-    width: '100%',
-    maxWidth: 560,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: '28px 24px',
-    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)',
+  container: {
+    backgroundColor: '#fff', borderRadius: 12, padding: 24, width: '100%', maxWidth: 600,
   },
-  // Title in red
   title: {
-    margin: 0,
-    marginBottom: 16,
-    fontSize: 24,
-    color: '#BF0000',
-    fontWeight: 800,
-    textAlign: 'center',
+    fontSize: 24, fontWeight: 700, textAlign: 'center', marginBottom: 20,
   },
-  block: {
-    marginTop: 8,
-    marginBottom: 12,
+  empty: {
+    color: '#000', textAlign: 'center'
   },
-  // Labels (black)
-  label: {
-    margin: 0,
-    color: '#000000',
-    fontSize: 13,
-    opacity: 0.9,
-    marginBottom: 4,
+  list: {
+    display: 'flex', flexDirection: 'column', gap: 12,
   },
-  // Values (black)
-  value: {
-    margin: 0,
-    color: '#000000',
-    fontSize: 16,
+  itemRow: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 16, padding: 8, borderBottom: '1px solid #ccc', color: '#000',
+  },
+  itemName: {
     fontWeight: 600,
   },
-  // Small helper text (gray)
-  helperText: {
-    marginTop: 8,
-    marginBottom: 0,
-    color: '#808080',
-    fontSize: 13,
-    lineHeight: 1.5,
-    textAlign: 'center',
+  itemQty: {
+    fontWeight: 500,
+  },
+  totalRow: {
+    marginTop: 20, fontSize: 18, fontWeight: 700, textAlign: 'right', color: '#000',
   },
   actions: {
-    display: 'grid',
-    gap: 10,
-    marginTop: 20,
+    marginTop: 32, display: 'flex', justifyContent: 'center', gap: 16,
   },
-  // Primary button: red bg, white text
   primaryBtn: {
-    width: '100%',
-    padding: '12px 16px',
-    backgroundColor: '#BF0000',
-    color: '#FFFFFF',
-    border: '1px solid #BF0000',
-    borderRadius: 10,
-    fontSize: 16,
-    fontWeight: 800,
-    cursor: 'pointer',
+    padding: '12px 24px', backgroundColor: '#BF0000', color: '#fff', fontSize: 16, fontWeight: 700, border: 'none', borderRadius: 8, cursor: 'pointer'
   },
-  // Secondary button: white bg, black text (subtle)
   secondaryBtn: {
-    width: '100%',
-    padding: '12px 16px',
-    backgroundColor: '#FFFFFF',
-    color: '#000000',
-    border: '1px solid #000000',
-    borderRadius: 10,
-    fontSize: 16,
-    fontWeight: 700,
-    cursor: 'pointer',
+    padding: '12px 24px', backgroundColor: '#fff', color: '#BF0000', fontSize: 16, fontWeight: 700, border: '2px solid #BF0000', borderRadius: 8, cursor: 'pointer'
   },
-}
-
-export default SupporterConfirm
+};
