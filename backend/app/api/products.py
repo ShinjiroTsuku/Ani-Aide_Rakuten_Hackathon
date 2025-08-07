@@ -70,7 +70,7 @@ async def get_products_summary():
 
     rakuten_results = []
     async with httpx.AsyncClient() as client:
-        for pid in totals.keys():
+        for pid in totals.keys(): 
             data = await fetch_rakuten_item(client, pid)
             rakuten_results.append(data)
             await asyncio.sleep(1)  # Delay to avoid hitting Rakuten API limit
