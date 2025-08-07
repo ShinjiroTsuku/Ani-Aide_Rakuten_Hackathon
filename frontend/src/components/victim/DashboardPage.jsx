@@ -1,90 +1,164 @@
-// frontend/src/components/victim/DashboardPage.jsx
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import './DashboardPage.css';
+import React from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 function DashboardPage() {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get victim user from location state or use default
+  const currentVictimUser = location.state?.victimUser || { username: '山田太郎' };
 
-  const userEmail = location.state?.userEmail || 'ゲスト';
-
+  // Logout handler
   const handleLogout = () => {
-    navigate('/victim/login');
-  };
-
-  // ★ここに仮の要請データを追加
-  const mockRecentRequests = [
-    { id: 1, shelter: '避難所A', petType: '猫', item: 'ペットフード', quantity: '10kg', status: 'pending', date: '2024-01-15' },
-    { id: 2, shelter: '避難所B', petType: '犬', item: '薬品', quantity: '5箱', status: 'completed', date: '2024-01-14' },
-    { id: 3, shelter: '避難所C', petType: '猫', item: '衛生用品', quantity: '20個', status: 'in-progress', date: '2024-01-13' },
-  ];
+    navigate('/victim/login')
+  }
 
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1>被災者向けダッシュボード</h1>
-        <div className="user-info">
-          <span>ようこそ、{userEmail}さん</span>
-          <button className="logout-btn" onClick={handleLogout}>
-            ログアウト
-          </button>
+    <div style={styles.page}>
+      {/* Header with user info and logout */}
+      <div style={styles.header}>
+        <div style={styles.headerLeft}>
+          <h1 style={styles.headerTitle}>被災者向けダッシュボード / Victim Dashboard</h1>
         </div>
-      </header>
-      
-      <main className="dashboard-main">
-        
-        {/* ★ここに表を追加 */}
-        <div className="recent-requests">
-          <h3>最近の要請 / Recent Requests</h3>
-          <div className="requests-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>避難所 / Shelter</th>
-                  <th>ペット種類 / Pet Type</th>
-                  <th>物品 / Item</th>
-                  <th>数量 / Quantity</th>
-                  <th>状態 / Status</th>
-                  <th>日付 / Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockRecentRequests.map(request => (
-                  <tr key={request.id}>
-                    <td>{request.shelter}</td>
-                    <td>{request.petType}</td>
-                    <td>{request.item}</td>
-                    <td>{request.quantity}</td>
-                    <td>
-                      <span className={`status-badge ${request.status}`}>
-                        {request.status === 'pending' ? '待機中' : 
-                         request.status === 'completed' ? '完了' : '進行中'}
-                      </span>
-                    </td>
-                    <td>{request.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div style={styles.headerRight}>
+          <div style={styles.userInfo}>
+            <span style={styles.userInfoText}>ようこそ、{currentVictimUser?.username}さん</span>
+            <button style={styles.logoutBtn} onClick={handleLogout}>
+              ログアウト / Logout
+            </button>
           </div>
         </div>
+      </div>
 
-        <nav className="dashboard-nav">
+      <div style={styles.container}>
+        <h2 style={styles.title}>被災者向けダッシュボード</h2>
+        <p style={styles.welcomeText}>ようこそ、{currentVictimUser?.username}さん！</p>
+        <p style={styles.description}>物資要請の状況がここに表示されます。</p>
+        
+        <nav style={styles.navigation}>
           <Link to="/victim/request">
-            <button className="nav-button primary-button">物資を要請する</button>
+            <button style={styles.navButton}>物資を要請する</button>
           </Link>
-          <a
-            href="https://my.rakuten.co.jp/"
-            target="_blank"
+
+          {/* ★ここを修正します */}
+          {/* <Link to="/victim/status">
+            <button style={{ marginLeft: '10px' }}>基本情報登録・変更</button>
+          </Link> */}
+          
+          {/* ★aタグを使って、外部サイトに直接リンク */}
+          <a 
+            href="https://my.rakuten.co.jp/" 
+            target="_blank" 
             rel="noopener noreferrer"
           >
-            <button className="nav-button secondary-button">基本情報登録・変更</button>
+            <button style={styles.navButton}>基本情報登録・変更</button>
           </a>
         </nav>
-      </main>
+      </div>
     </div>
   );
 }
+
+const styles = {
+  page: {
+    minHeight: '100vh',
+    backgroundColor: '#BF0000',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '32px 24px',
+  },
+  header: {
+    width: '100%',
+    maxWidth: 800,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '16px 24px',
+    background: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 24,
+    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)',
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerTitle: {
+    margin: 0,
+    fontSize: 24,
+    color: '#BF0000',
+    fontWeight: 800,
+  },
+  headerRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 16,
+  },
+  userInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+  },
+  userInfoText: {
+    fontSize: 16,
+    color: '#000000',
+    fontWeight: 600,
+  },
+  logoutBtn: {
+    padding: '8px 12px',
+    backgroundColor: '#BF0000',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: 8,
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: 'pointer',
+  },
+  container: {
+    width: '100%',
+    maxWidth: 800,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 32,
+    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)',
+  },
+  title: {
+    margin: 0,
+    marginBottom: 16,
+    fontSize: 28,
+    color: '#BF0000',
+    fontWeight: 800,
+    textAlign: 'center',
+  },
+  welcomeText: {
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 16,
+    color: '#000000',
+  },
+  description: {
+    textAlign: 'center',
+    marginBottom: 32,
+    color: '#666666',
+  },
+  navigation: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: 16,
+    flexWrap: 'wrap',
+  },
+  navButton: {
+    padding: '12px 24px',
+    backgroundColor: '#BF0000',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: 8,
+    fontSize: 16,
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+  },
+};
 
 export default DashboardPage;

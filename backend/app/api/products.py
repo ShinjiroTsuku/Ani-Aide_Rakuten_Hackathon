@@ -31,7 +31,9 @@ class ProductSummary(BaseModel):
 RAKUTEN_APP_ID = os.getenv("APP_ID")
 RAKUTEN_SEARCH_ENDPOINT = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
 
-async def fetch_rakuten_item(client: httpx.AsyncClient, item_code: str):
+semaphore = asyncio.Semaphore(3)
+
+async def fetch_rakuten_item(client: httpx.AsyncClient, item_code: str, delay_ms: int = 100):
     if not RAKUTEN_APP_ID:
         raise HTTPException(status_code=500, detail="Rakuten APP ID not set")
 
@@ -41,26 +43,29 @@ async def fetch_rakuten_item(client: httpx.AsyncClient, item_code: str):
         "format": "json",
         "hits": 1,
     }
-    try:
-        resp = await client.get(RAKUTEN_SEARCH_ENDPOINT, params=params, timeout=10.0)
-        resp.raise_for_status()
-        data = resp.json()
-        items = data.get("Items", [])
-        if not items:
-            return {"name": None, "image_url": None, "price": None}
 
-        item = items[0].get("Item", {})
-        name = item.get("itemName")
-        price = item.get("itemPrice")
-        img_list = item.get("mediumImageUrls") or []
-        img_url = img_list[0].get("imageUrl") if img_list else None
-    
-        return {"name": name, "image_url": img_url, "price": price}
+    await asyncio.sleep(delay_ms / 1000)  # ✅ small delay before each request
+
+    try:
+        async with semaphore:
+            resp = await client.get(RAKUTEN_SEARCH_ENDPOINT, params=params, timeout=10.0)
+            resp.raise_for_status()
+            data = resp.json()
+            items = data.get("Items", [])
+            if not items:
+                return {"name": None, "image_url": None, "price": None}
+
+            item = items[0].get("Item", {})
+            name = item.get("itemName")
+            price = item.get("itemPrice")
+            img_list = item.get("mediumImageUrls") or []
+            img_url = img_list[0].get("imageUrl") if img_list else None
+
+            return {"name": name, "image_url": img_url, "price": price}
 
     except Exception as e:
         print(f"Rakuten API error for {item_code}: {e}")
         return {"name": None, "image_url": None, "price": None}
-
 
 @router.get("/products/summary", response_model=List[ProductSummary])
 async def get_products_summary():
@@ -68,13 +73,14 @@ async def get_products_summary():
     for order in dummy_orders:
         totals[order["item_code"]] += order["quantity"]
 
-    rakuten_results = []
     async with httpx.AsyncClient() as client:
-        for pid in totals.keys(): 
-            data = await fetch_rakuten_item(client, pid)
-            rakuten_results.append(data)
-            await asyncio.sleep(1)  # Delay to avoid hitting Rakuten API limit
+        tasks = []
+        delay = 0
+        for pid in totals.keys():
+            tasks.append(fetch_rakuten_item(client, pid, delay_ms=delay))
+            delay += 350
 
+        rakuten_results = await asyncio.gather(*tasks)
 
     results = []
     for (pid, total_req), rakuten_data in zip(totals.items(), rakuten_results):

@@ -1,16 +1,16 @@
-# backend/app/main.py
-
 import sys
 sys.path.append('../')
-from fastapi import FastAPI, HTTPException
+
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 from typing import List, Optional
 import uuid
 from datetime import datetime
+import httpx
+
 from .admin_backend import admin_main
 from app.api import login as supporter_login
 from app.api import products
-
 
 app = FastAPI()
 app.include_router(admin_main.router)
@@ -21,36 +21,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],   # Or specify http://localhost:5173
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-# Data models
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-class UserResponse(BaseModel):
-    id: str
-    username: str
-    email: str
-    token: str
-
-class DataItem(BaseModel):
-    title: str
-    content: str
-    timestamp: Optional[str] = None
-
-class DataItemResponse(BaseModel):
-    id: str
-    title: str
-    content: str
-    timestamp: str
-
-# Mock data storage
+# モックユーザーデータ
 users_db = {
     "test@example.com": {
         "id": "user-1",
@@ -75,6 +52,27 @@ data_db = [
     }
 ]
 
+# Data models
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class UserResponse(BaseModel):
+    id: str
+    username: str
+    email: str
+    token: str
+
+class DataItem(BaseModel):
+    title: str
+    content: str
+    timestamp: Optional[str] = None
+
+class DataItemResponse(BaseModel):
+    id: str
+    title: str
+    content: str
+    timestamp: str
 
 @app.get("/")
 def read_root():
@@ -118,8 +116,6 @@ def logout():
 
 @app.get("/users/me", response_model=UserResponse)
 def get_user_info():
-    # Should get user info from JWT token
-    # For demo, return mock data
     return UserResponse(
         id="user-1",
         username="testuser",
@@ -172,8 +168,26 @@ def delete_data(item_id: str):
 
 @app.post("/upload")
 def upload_file():
-    # Should handle file upload here
-    # For demo, return mock response
     return {"message": "File uploaded successfully", "filename": "example.txt"}
 
-print("main.py loaded")
+RAKUTEN_APP_ID = "ここにアプリIDを貼る"
+
+@app.get("/search-hotel")
+async def search_hotel(hotelNo: int = Query(..., description="楽天ホテル番号を指定してください")):
+    url = "https://app.rakuten.co.jp/services/api/Travel/HotelDetailSearch/20170426"
+    params = {
+        "format": "json",
+        "applicationId": RAKUTEN_APP_ID,
+        "hotelNo": hotelNo
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+
+    if response.status_code != 200:
+        return {
+            "error": f"楽天APIからの応答に失敗しました（status code: {response.status_code}）",
+            "detail": response.text
+        }
+
+    return response.json()

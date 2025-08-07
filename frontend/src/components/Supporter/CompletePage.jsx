@@ -1,10 +1,19 @@
 // src/pages/CompletePage.jsx
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 
 function CompletePage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const status = searchParams.get('status') // "success" or "fail"
+
+  // Get supporter user from location state or use default
+  const currentSupporterUser = location.state?.supporterUser || { username: 'Supporter' }
+
+  // Logout handler
+  const handleLogout = () => {
+    navigate('/supporter/login')
+  }
 
   const handleBack = () => {
     navigate('/supporter/request')
@@ -14,9 +23,22 @@ function CompletePage() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>完了ページ</h2>
+      {/* Header with user info and logout */}
+      <div style={styles.header}>
+        <div style={styles.headerLeft}>
+          <h1 style={styles.headerTitle}>完了ページ / Complete Page</h1>
+        </div>
+        <div style={styles.headerRight}>
+          <div style={styles.userInfo}>
+            <span style={styles.userInfoText}>ようこそ、{currentSupporterUser?.username}さん</span>
+            <button style={styles.logoutBtn} onClick={handleLogout}>
+              ログアウト / Logout
+            </button>
+          </div>
+        </div>
+      </div>
 
+      <div style={styles.card}>
         <div style={styles.statusWrap}>
           <p style={styles.statusText}>
             {isSuccess
@@ -42,12 +64,58 @@ const styles = {
   // Full-bleed red background
   page: {
     minHeight: '100vh',
-    width: '100vw',              // ensures no side gutters if you use Option B
+    width: '100%',
     backgroundColor: '#BF0000',  // RED
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
     padding: '24px',
+  },
+  header: {
+    width: '100%',
+    maxWidth: 560,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '16px 24px',
+    background: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 24,
+    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)',
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerTitle: {
+    margin: 0,
+    fontSize: 20,
+    color: '#BF0000',
+    fontWeight: 700,
+  },
+  headerRight: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  userInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+  },
+  userInfoText: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: '#333',
+  },
+  logoutBtn: {
+    padding: '8px 12px',
+    backgroundColor: '#BF0000',
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 700,
+    border: 'none',
+    borderRadius: 6,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
   },
   // White card
   card: {
@@ -58,15 +126,6 @@ const styles = {
     padding: '28px 24px',
     boxShadow:
       '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)',
-  },
-  // Title in RED
-  title: {
-    margin: 0,
-    marginBottom: 12,
-    fontSize: 24,
-    color: '#BF0000',     // make the main heading red
-    fontWeight: 800,
-    textAlign: 'center',
   },
   statusWrap: {
     marginTop: 8,
