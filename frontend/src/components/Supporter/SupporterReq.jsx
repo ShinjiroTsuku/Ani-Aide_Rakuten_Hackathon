@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import './SupporterDashboard.css'
 
 function yen(n) {
   try {
@@ -73,250 +74,100 @@ export default function SupporterReq() {
   }
 
   return (
-    <div style={styles.page}>
-      {/* Header with user info and logout */}
-      <div style={styles.header}>
-        <div style={styles.headerLeft}>
-          <h1 style={styles.headerTitle}>支援者ページ / Supporter Page</h1>
-        </div>
-        <div style={styles.headerRight}>
-          <div style={styles.userInfo}>
-            <span style={styles.userInfoText}>ようこそ、{currentSupporterUser?.username}さん</span>
-            <button style={styles.logoutBtn} onClick={handleLogout}>
+    <div className="supporter-dashboard">
+      {/* Main Content */}
+      <div className="supporter-main-content">
+        {/* Header */}
+        <header className="supporter-dashboard-header">
+          <div className="supporter-header-left">
+            <h1>支援者ページ / Supporter Page</h1>
+          </div>
+          <div className="supporter-user-info">
+            <span>ようこそ、{currentSupporterUser?.username}さん</span>
+            <button className="supporter-logout-btn" onClick={handleLogout}>
               ログアウト / Logout
             </button>
           </div>
-        </div>
-      </div>
+        </header>
 
-      <div style={styles.container}>
-        <p style={styles.helperText}>必要な物資の一覧です。各商品の現在価格とリクエスト数を表示しています。</p>
+        {/* Content Area */}
+        <main className="supporter-content-area">
+          <div className="supporter-confirmation-card">
+            <h2>必要な物資の選択 / Select Required Items</h2>
+            <p>各商品の現在価格とリクエスト数を表示しています。支援したい商品の数量を選択してください。</p>
 
-        {loading && <div style={styles.loader}>読み込み中...</div>}
-        {error && <div style={styles.error}>{error}</div>}
+            {loading && (
+              <div className="supporter-loading">
+                <p>読み込み中... / Loading...</p>
+              </div>
+            )}
+            
+            {error && (
+              <div className="supporter-error">
+                <p>{error}</p>
+              </div>
+            )}
 
-        {!loading && !error && (
-          <>
-            <div style={styles.grid}>
-              {items.map((p) => {
-                const qty = quantities[p.product_id] || 0
-                const totalCost = p.price * qty
-                return (
-                  <div key={p.product_id} style={styles.card}>
-                    <div style={styles.imageWrap}>
-                      {p.image_url ? (
-                        <img src={p.image_url} alt={p.name} style={styles.image} />
-                      ) : (
-                        <div style={styles.imagePlaceholder}>No Image</div>
-                      )}
-                    </div>
-                    <div style={styles.cardBody}>
-                      <div style={styles.name}>{p.name}</div>
-                      <div style={styles.metaRowRight}>
-                        <div style={styles.price}>{yen(p.price)}</div>
-                        <div style={styles.requests}>リクエスト数: <strong>{p.total_requests ?? 0}</strong></div>
+            {!loading && !error && (
+              <>
+                <div className="supporter-products-grid">
+                  {items.map((p) => {
+                    const qty = quantities[p.product_id] || 0
+                    const totalCost = p.price * qty
+                    return (
+                      <div key={p.product_id} className="supporter-product-card">
+                        <div className="supporter-product-image">
+                          {p.image_url ? (
+                            <img src={p.image_url} alt={p.name} />
+                          ) : (
+                            <div>No Image</div>
+                          )}
+                        </div>
+                        <div className="supporter-product-body">
+                          <div className="supporter-product-name">{p.name}</div>
+                          <div className="supporter-product-meta">
+                            <div className="supporter-product-price">{yen(p.price)}</div>
+                            <div>リクエスト数: <strong>{p.total_requests ?? 0}</strong></div>
+                          </div>
+                          <div style={{ marginBottom: '12px', fontSize: '14px', fontWeight: '600' }}>
+                            合計: {yen(totalCost)}
+                          </div>
+                          <div className="supporter-quantity-controls">
+                            <button 
+                              className="supporter-qty-btn" 
+                              onClick={() => changeQuantity(p.product_id, -1)}
+                              disabled={qty === 0}
+                            >
+                              -
+                            </button>
+                            <span className="supporter-qty-value">{qty}</span>
+                            <button 
+                              className="supporter-qty-btn" 
+                              onClick={() => changeQuantity(p.product_id, 1)}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <div style={styles.totalCost}>合計: {yen(totalCost)}</div>
-                      <div style={styles.qtyRow}>
-                        <button style={styles.qtyBtn} onClick={() => changeQuantity(p.product_id, -1)}>-</button>
-                        <span style={styles.qtyValue}>{qty}</span>
-                        <button style={styles.qtyBtn} onClick={() => changeQuantity(p.product_id, 1)}>+</button>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+                    )
+                  })}
+                </div>
 
-            <div style={{ textAlign: 'center', marginTop: 32 }}>
-              <button style={styles.primaryBtn} onClick={handleToConfirm}>支援に進む</button>
-            </div>
-          </>
-        )}
+                <div className="supporter-actions">
+                  <button 
+                    className="supporter-btn-primary" 
+                    onClick={handleToConfirm}
+                    disabled={Object.values(quantities).every(q => q === 0)}
+                  >
+                    支援に進む / Proceed to Support
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </main>
       </div>
     </div>
   )
-}
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    width: '100%',
-    backgroundColor: '#BF0000',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '32px 24px',
-  },
-  header: {
-    width: '100%',
-    maxWidth: 1000,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '16px 24px',
-    background: '#FFFFFF',
-    borderRadius: 12,
-    marginBottom: 24,
-    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)',
-  },
-  headerLeft: {
-    flex: 1,
-  },
-  headerTitle: {
-    margin: 0,
-    fontSize: 24,
-    color: '#BF0000',
-    fontWeight: 800,
-  },
-  headerRight: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 16,
-  },
-  userInfo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-  },
-  userInfoText: {
-    fontSize: 16,
-    color: '#000000',
-    fontWeight: 600,
-  },
-  logoutBtn: {
-    padding: '8px 12px',
-    backgroundColor: '#BF0000',
-    color: '#FFFFFF',
-    border: 'none',
-    borderRadius: 8,
-    fontSize: 14,
-    fontWeight: 600,
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-  },
-  container: {
-    width: '100%', 
-    maxWidth: 1000,
-  },
-  helperText: {
-    color: '#808080', 
-    fontSize: 13, 
-    textAlign: 'center', 
-    marginTop: 8, 
-    marginBottom: 16,
-  },
-  loader: {
-    background: '#fff', 
-    color: '#000', 
-    borderRadius: 12, 
-    padding: '16px', 
-    textAlign: 'center',
-  },
-  error: {
-    background: '#fff', 
-    color: '#000', 
-    borderRadius: 12, 
-    padding: '16px', 
-    textAlign: 'center', 
-    border: '1px solid #000',
-  },
-  grid: {
-    display: 'grid', 
-    gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', 
-    gap: 16,
-  },
-  card: {
-    backgroundColor: '#FFFFFF', 
-    borderRadius: 12, 
-    overflow: 'hidden', 
-    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)', 
-    display: 'flex', 
-    flexDirection: 'column',
-  },
-  imageWrap: {
-    background: '#f6f6f6', 
-    height: 160, 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center',
-  },
-  image: {
-    maxHeight: '100%', 
-    maxWidth: '100%', 
-    objectFit: 'contain',
-  },
-  imagePlaceholder: {
-    color: '#808080', 
-    fontSize: 12,
-  },
-  cardBody: {
-    padding: 16,
-  },
-  name: {
-    color: '#000000', 
-    fontWeight: 700, 
-    fontSize: 16, 
-    lineHeight: 1.4, 
-    marginBottom: 10,
-  },
-  metaRowRight: {
-    display: 'flex', 
-    flexDirection: 'column', 
-    alignItems: 'flex-end', 
-    gap: 4, 
-    marginBottom: 8,
-  },
-  price: {
-    color: '#000000', 
-    fontSize: 16, 
-    fontWeight: 700,
-  },
-  requests: {
-    color: '#000000', 
-    fontSize: 13,
-  },
-  totalCost: {
-    fontSize: 14, 
-    fontWeight: 600, 
-    marginBottom: 8, 
-    color: '#000',
-  },
-  qtyRow: {
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    gap: 12,
-  },
-  qtyBtn: {
-    width: 40, 
-    height: 40, 
-    fontSize: 20, 
-    fontWeight: 'bold', 
-    backgroundColor: '#BF0000', 
-    color: '#fff', 
-    border: 'none', 
-    borderRadius: 8, 
-    cursor: 'pointer', 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-  },
-  qtyValue: {
-    fontSize: 16, 
-    fontWeight: 600, 
-    color: '#000',
-  },
-  primaryBtn: {
-    padding: '14px 24px', 
-    backgroundColor: '#FFFFFF', 
-    color: '#BF0000', 
-    border: '2px solid #BF0000', 
-    borderRadius: 10, 
-    fontSize: 18, 
-    fontWeight: 800, 
-    cursor: 'pointer',
-  },
 }
