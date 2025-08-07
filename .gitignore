@@ -3,3 +3,4 @@ venv/
 vite-project/
 package.json
 package-lock.json
+**/__pycache__/
