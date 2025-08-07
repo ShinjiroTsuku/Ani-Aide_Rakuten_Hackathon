@@ -170,7 +170,6 @@ def delete_data(item_id: str):
 def upload_file():
     return {"message": "File uploaded successfully", "filename": "example.txt"}
 
-# ✅ 楽天ホテルAPI（アプリIDを正しく設定して使う）
 RAKUTEN_APP_ID = "ここにアプリIDを貼る"
 
 @app.get("/search-hotel")
