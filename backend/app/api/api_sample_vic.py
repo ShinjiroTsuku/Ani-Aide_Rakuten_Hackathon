@@ -6,13 +6,13 @@ import concurrent.futures
 from pydantic import BaseModel
 import os 
 
-from database import database, requests as requests_table
+from .database import database, requests as requests_table
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+
+TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
+templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
 @app.on_event("startup")
 async def startup():
