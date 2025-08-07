@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './AdminDashboard.css'
 import AdminRequests from './AdminRequests'
@@ -58,21 +58,6 @@ function AdminDashboard({ adminUser, onLogout }) {
   }
 
 
-  // Mock data for demonstration
-  const mockStats = {
-    totalRequests: 156,
-    pendingRequests: 23,
-    completedSupports: 89,
-    activeShelters: 12
-  }
-
-  const mockRecentRequests = [
-    { id: 1, location: '東京都', shelter: '避難所A', petType: '猫', item: 'ペットフード', quantity: '10kg', status: 'pending', date: '2024-01-15' },
-    { id: 2, location: '大阪府', shelter: '避難所B', petType: '犬', item: '薬品', quantity: '5箱', status: 'completed', date: '2024-01-14' },
-    { id: 3, location: '福岡県', shelter: '避難所C', petType: '猫', item: '衛生用品', quantity: '20個', status: 'in-progress', date: '2024-01-13' },
-    { id: 4, location: '北海道', shelter: '避難所D', petType: '犬', item: '毛布', quantity: '15枚', status: 'pending', date: '2024-01-12' },
-    { id: 5, location: '沖縄県', shelter: '避難所E', petType: 'その他', item: 'ケージ', quantity: '8個', status: 'completed', date: '2024-01-11' }
-  ]
 
   // Mock data for reports
   const mockReportData = {

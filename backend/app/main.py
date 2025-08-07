@@ -7,7 +7,6 @@ from typing import List, Optional
 import uuid
 from datetime import datetime
 from .admin_backend import admin_main
-from database import database
 from app.api import login as supporter_login
 from starlette.middleware.sessions import SessionMiddleware
 import httpx
