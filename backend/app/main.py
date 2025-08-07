@@ -10,11 +10,13 @@ from datetime import datetime
 from .admin_backend import admin_main
 from database import database
 from app.api import login as supporter_login
+from app.api import products
 
 
 app = FastAPI()
 app.include_router(admin_main.router)
 app.include_router(supporter_login.router, prefix="/supporter")
+app.include_router(products.router, prefix="/supporter")
 
 from fastapi.middleware.cors import CORSMiddleware
 
