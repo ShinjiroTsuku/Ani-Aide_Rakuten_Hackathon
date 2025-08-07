@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # backend/app/main.py
 
 import sys
@@ -11,6 +12,10 @@ from .admin_backend import admin_main
 from app.api import login as supporter_login
 from app.api import products
 
+=======
+from fastapi import FastAPI, Query
+import httpx
+>>>>>>> 7ee48ef (WIP: 仮想環境以外に変更なし)
 
 app = FastAPI()
 app.include_router(admin_main.router)
@@ -76,6 +81,7 @@ data_db = [
 ]
 
 
+<<<<<<< HEAD
 @app.get("/")
 def read_root():
     return {"message": "Hello, FasAPI"}
@@ -175,5 +181,30 @@ def upload_file():
     # Should handle file upload here
     # For demo, return mock response
     return {"message": "File uploaded successfully", "filename": "example.txt"}
+=======
+RAKUTEN_APP_ID = "ここにアプリIDを貼る"
+>>>>>>> 7ee48ef (WIP: 仮想環境以外に変更なし)
 
-print("main.py loaded")
+# ✅ ホテル番号で楽天APIから情報を取得するエンドポイント
+@app.get("/search-hotel")
+async def search_hotel(hotelNo: int = Query(..., description="楽天ホテル番号を指定してください")):
+    url = "https://app.rakuten.co.jp/services/api/Travel/HotelDetailSearch/20170426"
+    params = {
+        "format": "json",
+        "applicationId": RAKUTEN_APP_ID,
+        "hotelNo": hotelNo
+    }
+
+    # 非同期でリクエスト送信
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+
+    # エラーチェック
+    if response.status_code != 200:
+        return {
+            "error": f"楽天APIからの応答に失敗しました（status code: {response.status_code}）",
+            "detail": response.text
+        }
+
+    # JSONデータを返す
+    return response.json()

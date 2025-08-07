@@ -10,8 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Noto Sans JP', sans-serif; }
-        .no-js #breed-selector-dog-container, .no-js #breed-selector-cat-container { display: none; }
-        #breed-selector-dog-container, #breed-selector-cat-container { display: none; }
+        .dynamic-selector { display: none; }
+        /* モーダルのスタイル */
+        .modal-active { display: flex; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -21,14 +22,12 @@
         <h1 class="text-3xl md:text-4xl font-bold text-indigo-700">ペット用品支援 検索</h1>
         <p class="text-gray-600 mt-2">楽天で見つかる、大切な家族のためのアイテム</p>
     </header>
-
     <div class="bg-white p-6 rounded-2xl shadow-lg mb-8">
         <form id="search-form" action="/" method="get">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                <!-- 動物の種類 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <div>
                     <label for="animal-selector" class="block text-sm font-medium text-gray-700 mb-2">動物の種類</label>
-                    <select id="animal-selector" name="animal" class="w-full p-3 border rounded-lg">
+                    <select id="animal-selector" name="animal" class="w-full p-3 border rounded-lg bg-white">
                         <option value="">すべて</option>
                         {% for animal in animal_types %}
                         <option value="{{ animal }}" {% if animal == selected_animal %}selected{% endif %}>{{ animal }}</option>
@@ -36,57 +35,74 @@
                     </select>
                 </div>
 
-                <!-- 犬種 -->
-                <div id="breed-selector-dog-container">
+                <div id="allergy-container" class="dynamic-selector">
+                    <label for="allergy-selector" class="block text-sm font-medium text-gray-700 mb-2">アレルギー有無</label>
+                    <select id="allergy-selector" name="allergy_status" class="w-full p-3 border rounded-lg bg-white">
+                        <option value="">指定なし</option>
+                        {% for key, value in allergy_options.items() %}
+                        <option value="{{ key }}" {% if key == selected_allergy %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="dog-size-container" class="dynamic-selector">
+                    <label for="dog-size-selector" class="block text-sm font-medium text-gray-700 mb-2">犬のサイズ</label>
+                    <select id="dog-size-selector" name="dog_size" class="w-full p-3 border rounded-lg bg-white">
+                        <option value="">サイズ指定なし</option>
+                        {% for size in dog_sizes %}
+                        <option value="{{ size }}" {% if size == selected_dog_size %}selected{% endif %}>{{ size }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="life-stage-container" class="dynamic-selector">
+                    <label for="life-stage-selector" class="block text-sm font-medium text-gray-700 mb-2">ライフステージ</label>
+                    <select id="life-stage-selector" name="life_stage" class="w-full p-3 border rounded-lg bg-white">
+                        <option value="">ステージ指定なし</option>
+                        {% for stage in life_stages %}
+                        <option value="{{ stage }}" {% if stage == selected_life_stage %}selected{% endif %}>{{ stage }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="dog-breed-container" class="dynamic-selector">
                     <label for="dog-breed-selector" class="block text-sm font-medium text-gray-700 mb-2">犬種</label>
-                    <select id="dog-breed-selector" name="breed" class="w-full p-3 border rounded-lg">
+                    <select id="dog-breed-selector" name="breed" class="w-full p-3 border rounded-lg bg-white">
                         <option value="">すべての犬種</option>
                         {% for breed in dog_breeds %}
                         <option value="{{ breed }}" {% if breed == selected_breed %}selected{% endif %}>{{ breed }}</option>
                         {% endfor %}
                     </select>
                 </div>
-
-                <!-- 猫種 -->
-                <div id="breed-selector-cat-container">
+                <div id="cat-breed-container" class="dynamic-selector">
                     <label for="cat-breed-selector" class="block text-sm font-medium text-gray-700 mb-2">猫種</label>
-                    <select id="cat-breed-selector" name="breed" class="w-full p-3 border rounded-lg">
+                    <select id="cat-breed-selector" name="breed" class="w-full p-3 border rounded-lg bg-white">
                         <option value="">すべての猫種</option>
                         {% for breed in cat_breeds %}
                         <option value="{{ breed }}" {% if breed == selected_breed %}selected{% endif %}>{{ breed }}</option>
                         {% endfor %}
                     </select>
                 </div>
-
-                <!-- 支援カテゴリ -->
                 <div>
                     <label for="support-category-selector" class="block text-sm font-medium text-gray-700 mb-2">支援カテゴリ</label>
-                    <select id="support-category-selector" name="category" class="w-full p-3 border rounded-lg">
+                    <select id="support-category-selector" name="category" class="w-full p-3 border rounded-lg bg-white">
                         <option value="">すべて</option>
                         {% for key, value in support_categories.items() %}
                         <option value="{{ key }}" {% if key == selected_category %}selected{% endif %}>{{ value }}</option>
                         {% endfor %}
                     </select>
                 </div>
-
-                <!-- 並び順 -->
-                <div>
+                <div class="lg:col-span-2 xl:col-span-1">
+                    <label for="keyword-input" class="block text-sm font-medium text-gray-700 mb-2">キーワード</label>
+                    <input type="text" id="keyword-input" name="keyword" value="{{ input_keyword or '' }}" class="w-full p-3 border rounded-lg" placeholder="例: おもちゃ">
+                </div>
+                 <div>
                     <label for="sort-selector" class="block text-sm font-medium text-gray-700 mb-2">並び順</label>
-                    <select id="sort-selector" name="sort" class="w-full p-3 border rounded-lg">
+                    <select id="sort-selector" name="sort" class="w-full p-3 border rounded-lg bg-white">
                         {% for key, value in sort_options.items() %}
                         <option value="{{ key }}" {% if key == selected_sort %}selected{% endif %}>{{ value }}</option>
                         {% endfor %}
                     </select>
                 </div>
-
-                <!-- フリーワード -->
-                <div class="md:col-span-2 lg:col-span-1">
-                    <label for="keyword-input" class="block text-sm font-medium text-gray-700 mb-2">キーワード</label>
-                    <input type="text" id="keyword-input" name="keyword" value="{{ input_keyword or '' }}" class="w-full p-3 border rounded-lg" placeholder="例: 高齢犬">
-                </div>
-
                 <div class="flex items-end">
-                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700">検索する</button>
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors">検索する</button>
                 </div>
             </div>
         </form>
@@ -94,95 +110,168 @@
 
     {% if keyword %}
     <div class="mb-6">
-        <h2 class="text-xl font-semibold">「<span class="text-indigo-600">{{ keyword }}</span>」の検索結果 <span class="text-lg text-gray-600">({{ results|length }}件)</span></h2>
+        <h2 class="text-xl font-semibold">「<span class="text-indigo-600">{{ keyword }}</span>」の検索結果 <span class="text-lg text-gray-600">({{ general_items|length }}件)</span></h2>
     </div>
     {% endif %}
 
-    {% if results %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {% for item in results %}
-        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-            <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
-                <img src="{{ item.image }}" alt="{{ item.name }}" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h3 class="text-sm font-bold h-20 overflow-hidden">{{ item.name }}</h3>
-                    <p class="text-lg font-bold text-red-600 mt-2">¥{{ "{:,.0f}".format(item.price) }}</p>
-                    <p class="text-xs text-gray-500 mt-1 truncate">レビュー: {{ item.review_count }} / 評価: {{ "%.2f"|format(item.review_average|float) }} ★</p>
-                    <p class="text-xs text-gray-500 mt-1 truncate">ショップ: {{ item.shop }}</p>
-                </div>
-            </a>
+    <div id="search-results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for item in general_items %}
+        <div data-item-code="{{ item.item_code }}" class="item-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+            <img src="{{ item.image }}" alt="{{ item.name }}" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-sm font-bold h-20 overflow-hidden">{{ item.name }}</h3>
+                <p class="text-lg font-bold text-red-600 mt-2">¥{{ "{:,.0f}".format(item.price) }}</p>
+                <p class="text-xs text-gray-500 mt-1 truncate">レビュー: {{ item.review_count }} / 評価: {{ "%.2f"|format(item.review_average|float) }} ★</p>
+                <p class="text-xs text-gray-500 mt-1 truncate">ショップ: {{ item.shop }}</p>
+            </div>
         </div>
         {% endfor %}
     </div>
-    {% elif keyword %}
+
+    {% if keyword and not general_items %}
     <div class="text-center p-10 bg-white rounded-lg shadow">
         <p class="text-gray-600">「{{ keyword }}」に一致する商品が見つかりませんでした。</p>
         <p class="text-sm text-gray-500 mt-2">条件を変えて再検索してみてください。</p>
     </div>
     {% endif %}
-
-    {% if suggested_results %}
-    <div class="mt-16">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-indigo-500 pl-4">こちらもいかがですか？</h2>
-        {% for cat_name, items in suggested_results.items() %}
-        <div class="mb-10">
-            <h3 class="text-xl font-semibold text-gray-700 mb-4">「{{ cat_name }}」カテゴリのおすすめ</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                {% for item in items %}
-                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
-                        <img src="{{ item.image }}" alt="{{ item.name }}" class="w-full h-40 object-cover">
-                        <div class="p-4">
-                            <h4 class="text-sm font-semibold h-16 overflow-hidden">{{ item.name }}</h4>
-                            <p class="text-lg font-bold text-red-600 mt-2">¥{{ "{:,.0f}".format(item.price) }}</p>
-                            <p class="text-xs text-gray-500 mt-1 truncate">ショップ: {{ item.shop }}</p>
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
 </div>
 
+<div id="item-modal" class="modal-active fixed inset-0 bg-gray-900 bg-opacity-75 items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-1/2 max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div id="modal-content" class="p-6 md:p-8">
+            <div class="flex justify-center items-center h-64">
+                <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div>
+            </div>
+        </div>
+    </div>
+</div>
 <footer class="text-center py-8 text-sm text-gray-500">
     <p>Powered by <a href="https://webservice.rakuten.co.jp/" target="_blank" class="text-indigo-600 hover:underline">Rakuten Web Service</a></p>
 </footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.body.classList.remove('no-js');
     const animalSelector = document.getElementById('animal-selector');
-    const dogContainer = document.getElementById('breed-selector-dog-container');
-    const catContainer = document.getElementById('breed-selector-cat-container');
-    const dogSelect = document.getElementById('dog-breed-selector');
-    const catSelect = document.getElementById('cat-breed-selector');
+    
+    // ★★★ allergy-container のIDを取得 ★★★
+    const allergyContainer = document.getElementById('allergy-container');
+    const dogSizeContainer = document.getElementById('dog-size-container');
+    const lifeStageContainer = document.getElementById('life-stage-container');
+    const dogBreedContainer = document.getElementById('dog-breed-container');
+    const catBreedContainer = document.getElementById('cat-breed-container');
 
-    function updateBreedSelectors() {
-        const selected = animalSelector.value;
-        if (selected === "犬") {
-            dogContainer.style.display = "block";
-            catContainer.style.display = "none";
-            dogSelect.name = "breed";
-            catSelect.name = "";
-        } else if (selected === "猫") {
-            dogContainer.style.display = "none";
-            catContainer.style.display = "block";
-            dogSelect.name = "";
-            catSelect.name = "breed";
-        } else {
-            dogContainer.style.display = "none";
-            catContainer.style.display = "none";
-            dogSelect.name = "";
-            catSelect.name = "";
+    const dogBreedSelect = document.getElementById('dog-breed-selector');
+    const catBreedSelect = document.getElementById('cat-breed-selector');
+
+    function updateFormVisibility() {
+        const selectedAnimal = animalSelector.value;
+
+        // ★★★ allergyContainerも非表示にする ★★★
+        allergyContainer.style.display = 'none';
+        dogSizeContainer.style.display = 'none';
+        lifeStageContainer.style.display = 'none';
+        dogBreedContainer.style.display = 'none';
+        catBreedContainer.style.display = 'none';
+        dogBreedSelect.name = '';
+        catBreedSelect.name = '';
+
+        if (selectedAnimal === "犬") {
+            // ★★★ allergyContainerも表示する ★★★
+            allergyContainer.style.display = 'block';
+            dogSizeContainer.style.display = 'block';
+            lifeStageContainer.style.display = 'block';
+            dogBreedContainer.style.display = 'block';
+            dogBreedSelect.name = 'breed'; 
+        } else if (selectedAnimal === "猫") {
+            catBreedContainer.style.display = 'block';
+            catBreedSelect.name = 'breed';
         }
     }
 
-    updateBreedSelectors();
-    animalSelector.addEventListener("change", updateBreedSelectors);
+    // ページ読み込み時と、動物セレクタ変更時に実行
+    updateFormVisibility();
+    animalSelector.addEventListener("change", updateFormVisibility);
+
+    // (モーダル表示用のJSは変更なし)
+    const modal = document.getElementById('item-modal');
+    const modalContent = document.getElementById('modal-content');
+    const itemCards = document.querySelectorAll('.item-card');
+    const loadingSpinner = `<div class="flex justify-center items-center h-64"><div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div></div>`;
+    let currentItemData = null;
+    itemCards.forEach(card => {
+        card.addEventListener('click', async () => {
+            const itemCode = card.dataset.itemCode;
+            if (!itemCode) return;
+            modal.classList.remove('hidden');
+            modalContent.innerHTML = loadingSpinner;
+            try {
+                const response = await fetch(`/api/item/${itemCode}`);
+                if (!response.ok) throw new Error('商品情報の取得に失敗しました。');
+                const item = await response.json();
+                currentItemData = item;
+                updateModalContent(item);
+            } catch (error) {
+                modalContent.innerHTML = `<p class="text-red-500 text-center">${error.message}</p>`;
+            }
+        });
+    });
+    function updateModalContent(item) {
+        const formattedPrice = new Intl.NumberFormat('ja-JP').format(item.price);
+        const reviewAverage = parseFloat(item.review_average).toFixed(2);
+        modalContent.innerHTML = `
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">商品詳細</h2>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="md:flex">
+                <div class="md:w-1/3 md:mr-6 mb-4 md:mb-0"><img src="${item.image}" alt="${item.name}" class="rounded-lg shadow-md w-full"></div>
+                <div class="md:w-2/3">
+                    <h3 class="text-xl font-bold">${item.name}</h3>
+                    <p class="text-gray-500 text-sm mt-1">ショップ: ${item.shop}</p>
+                    <p class="text-3xl font-bold text-red-600 my-4">¥${formattedPrice}</p>
+                    <div class="text-sm text-gray-600"><span>レビュー: ${item.review_count}件</span> / <span>平均評価: ${reviewAverage} ★</span></div>
+                    <div class="mt-6">
+                        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="inline-block bg-yellow-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-yellow-600 mr-4">楽天で見る</a>
+                        <button id="request-button" class="inline-block bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700">これを依頼する</button>
+                    </div>
+                    <div id="request-status" class="mt-4 text-green-600 font-bold"></div>
+                </div>
+            </div>`;
+        document.getElementById('close-modal').addEventListener('click', () => modal.classList.add('hidden'));
+        document.getElementById('request-button').addEventListener('click', handleRequestItem);
+    }
+    async function handleRequestItem() {
+        if (!currentItemData) return;
+        const requestButton = document.getElementById('request-button');
+        const requestStatus = document.getElementById('request-status');
+        requestButton.disabled = true;
+        requestButton.textContent = "処理中...";
+        requestStatus.textContent = "";
+        try {
+            const response = await fetch('/api/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({item_code: currentItemData.item_code, item_name: currentItemData.name, item_price: currentItemData.price, shop_name: currentItemData.shop})
+            });
+            if (!response.ok) throw new Error('依頼の送信に失敗しました。');
+            const result = await response.json();
+            if (result.status === 'success') {
+                requestButton.textContent = "依頼完了しました";
+                requestButton.classList.replace('bg-indigo-600', 'bg-gray-400');
+                requestButton.classList.remove('hover:bg-indigo-700');
+                requestStatus.textContent = "ご依頼ありがとうございます。管理者が確認します。";
+            } else {
+                throw new Error(result.message || '依頼に失敗しました。');
+            }
+        } catch (error) {
+            requestStatus.textContent = error.message;
+            requestButton.disabled = false;
+            requestButton.textContent = "これを依頼する";
+        }
+    }
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.add('hidden');
+    });
 });
 </script>
 
