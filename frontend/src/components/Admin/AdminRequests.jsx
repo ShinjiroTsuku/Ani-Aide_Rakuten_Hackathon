@@ -11,7 +11,11 @@ function AdminRequests() {
       status: 'pending',
       date: '2024-01-15',
       priority: 'high',
-      description: 'ペット用の食料が必要です'
+      description: 'ペット用の食料が必要です',
+      contact: '田中太郎',
+      phone: '090-1234-5678',
+      address: '東京都渋谷区1-1-1',
+      notes: '緊急のため早めの対応をお願いします'
     },
     {
       id: 2,
@@ -21,7 +25,11 @@ function AdminRequests() {
       status: 'completed',
       date: '2024-01-14',
       priority: 'medium',
-      description: '高血圧の薬が必要です'
+      description: '薬が必要です',
+      contact: '佐藤花子',
+      phone: '080-9876-5432',
+      address: '大阪府大阪市2-2-2',
+      notes: '定期的な服用が必要です'
     },
     {
       id: 3,
@@ -31,17 +39,58 @@ function AdminRequests() {
       status: 'in-progress',
       date: '2024-01-13',
       priority: 'low',
-      description: '歯ブラシと歯磨き粉が必要です'
+      description: '歯ブラシと歯磨き粉が必要です',
+      contact: '山田次郎',
+      phone: '070-5555-1234',
+      address: '福岡県福岡市3-3-3',
+      notes: '子供用の歯ブラシも含めてください'
     }
   ])
 
   const [filterStatus, setFilterStatus] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedRequest, setSelectedRequest] = useState(null)
+  const [editForm, setEditForm] = useState({})
 
   const handleStatusChange = (requestId, newStatus) => {
     setRequests(requests.map(req => 
       req.id === requestId ? { ...req, status: newStatus } : req
     ))
+  }
+
+  const handleViewDetails = (request) => {
+    setSelectedRequest(request)
+    setShowDetailsModal(true)
+  }
+
+  const handleEdit = (request) => {
+    setSelectedRequest(request)
+    setEditForm({ ...request })
+    setShowEditModal(true)
+  }
+
+  const handleSaveEdit = () => {
+    setRequests(requests.map(req => 
+      req.id === editForm.id ? editForm : req
+    ))
+    setShowEditModal(false)
+    setSelectedRequest(null)
+    setEditForm({})
+  }
+
+  const handleCancelEdit = () => {
+    setShowEditModal(false)
+    setSelectedRequest(null)
+    setEditForm({})
+  }
+
+  const handleInputChange = (field, value) => {
+    setEditForm(prev => ({
+      ...prev,
+      [field]: value
+    }))
   }
 
   const filteredRequests = requests.filter(request => {
@@ -66,6 +115,24 @@ function AdminRequests() {
       case 'medium': return 'priority-medium'
       case 'low': return 'priority-low'
       default: return 'priority-default'
+    }
+  }
+
+  const getPriorityLabel = (priority) => {
+    switch (priority) {
+      case 'high': return '高'
+      case 'medium': return '中'
+      case 'low': return '低'
+      default: return priority
+    }
+  }
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'pending': return '待機中'
+      case 'in-progress': return '進行中'
+      case 'completed': return '完了'
+      default: return status
     }
   }
 
@@ -122,8 +189,7 @@ function AdminRequests() {
                 <td>{request.quantity}</td>
                 <td>
                   <span className={`priority-badge ${getPriorityClass(request.priority)}`}>
-                    {request.priority === 'high' ? '高' : 
-                     request.priority === 'medium' ? '中' : '低'}
+                    {getPriorityLabel(request.priority)}
                   </span>
                 </td>
                 <td>
@@ -140,8 +206,18 @@ function AdminRequests() {
                 <td>{request.date}</td>
                 <td>
                   <div className="action-buttons">
-                    <button className="btn-view">詳細</button>
-                    <button className="btn-edit">編集</button>
+                    <button 
+                      className="btn-view"
+                      onClick={() => handleViewDetails(request)}
+                    >
+                      詳細
+                    </button>
+                    <button 
+                      className="btn-edit"
+                      onClick={() => handleEdit(request)}
+                    >
+                      編集
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -169,6 +245,225 @@ function AdminRequests() {
           </div>
         </div>
       </div>
+
+      {/* Details Modal */}
+      {showDetailsModal && selectedRequest && (
+        <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>要請詳細 / Request Details</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowDetailsModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="details-grid">
+                <div className="detail-item">
+                  <label>ID:</label>
+                  <span>{selectedRequest.id}</span>
+                </div>
+                <div className="detail-item">
+                  <label>避難所 / Shelter:</label>
+                  <span>{selectedRequest.shelter}</span>
+                </div>
+                <div className="detail-item">
+                  <label>物品 / Item:</label>
+                  <span>{selectedRequest.item}</span>
+                </div>
+                <div className="detail-item">
+                  <label>数量 / Quantity:</label>
+                  <span>{selectedRequest.quantity}</span>
+                </div>
+                <div className="detail-item">
+                  <label>優先度 / Priority:</label>
+                  <span className={`priority-badge ${getPriorityClass(selectedRequest.priority)}`}>
+                    {getPriorityLabel(selectedRequest.priority)}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <label>状態 / Status:</label>
+                  <span className={`status-badge ${getStatusBadgeClass(selectedRequest.status)}`}>
+                    {getStatusLabel(selectedRequest.status)}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <label>日付 / Date:</label>
+                  <span>{selectedRequest.date}</span>
+                </div>
+                <div className="detail-item">
+                  <label>説明 / Description:</label>
+                  <span>{selectedRequest.description}</span>
+                </div>
+                <div className="detail-item">
+                  <label>担当者 / Contact:</label>
+                  <span>{selectedRequest.contact}</span>
+                </div>
+                <div className="detail-item">
+                  <label>電話番号 / Phone:</label>
+                  <span>{selectedRequest.phone}</span>
+                </div>
+                <div className="detail-item">
+                  <label>住所 / Address:</label>
+                  <span>{selectedRequest.address}</span>
+                </div>
+                <div className="detail-item full-width">
+                  <label>備考 / Notes:</label>
+                  <span>{selectedRequest.notes}</span>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="btn-edit"
+                onClick={() => {
+                  setShowDetailsModal(false)
+                  handleEdit(selectedRequest)
+                }}
+              >
+                編集 / Edit
+              </button>
+              <button 
+                className="btn-cancel"
+                onClick={() => setShowDetailsModal(false)}
+              >
+                閉じる / Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && selectedRequest && (
+        <div className="modal-overlay" onClick={handleCancelEdit}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>要請編集 / Edit Request</h3>
+              <button 
+                className="modal-close"
+                onClick={handleCancelEdit}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="edit-form">
+                <div className="form-group">
+                  <label>避難所 / Shelter:</label>
+                  <input
+                    type="text"
+                    value={editForm.shelter || ''}
+                    onChange={(e) => handleInputChange('shelter', e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>物品 / Item:</label>
+                  <input
+                    type="text"
+                    value={editForm.item || ''}
+                    onChange={(e) => handleInputChange('item', e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>数量 / Quantity:</label>
+                  <input
+                    type="text"
+                    value={editForm.quantity || ''}
+                    onChange={(e) => handleInputChange('quantity', e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>優先度 / Priority:</label>
+                  <select
+                    value={editForm.priority || ''}
+                    onChange={(e) => handleInputChange('priority', e.target.value)}
+                  >
+                    <option value="high">高 / High</option>
+                    <option value="medium">中 / Medium</option>
+                    <option value="low">低 / Low</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>状態 / Status:</label>
+                  <select
+                    value={editForm.status || ''}
+                    onChange={(e) => handleInputChange('status', e.target.value)}
+                  >
+                    <option value="pending">待機中 / Pending</option>
+                    <option value="in-progress">進行中 / In Progress</option>
+                    <option value="completed">完了 / Completed</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>日付 / Date:</label>
+                  <input
+                    type="date"
+                    value={editForm.date || ''}
+                    onChange={(e) => handleInputChange('date', e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>説明 / Description:</label>
+                  <textarea
+                    value={editForm.description || ''}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    rows="3"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>担当者 / Contact:</label>
+                  <input
+                    type="text"
+                    value={editForm.contact || ''}
+                    onChange={(e) => handleInputChange('contact', e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>電話番号 / Phone:</label>
+                  <input
+                    type="text"
+                    value={editForm.phone || ''}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>住所 / Address:</label>
+                  <input
+                    type="text"
+                    value={editForm.address || ''}
+                    onChange={(e) => handleInputChange('address', e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>備考 / Notes:</label>
+                  <textarea
+                    value={editForm.notes || ''}
+                    onChange={(e) => handleInputChange('notes', e.target.value)}
+                    rows="3"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="btn-save"
+                onClick={handleSaveEdit}
+              >
+                保存 / Save
+              </button>
+              <button 
+                className="btn-cancel"
+                onClick={handleCancelEdit}
+              >
+                キャンセル / Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

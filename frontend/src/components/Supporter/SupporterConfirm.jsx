@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import './SupporterDashboard.css';
 
 export default function SupporterConfirm() {
   const location = useLocation();
@@ -45,53 +46,75 @@ export default function SupporterConfirm() {
     }
   }
 
-
   const handleBack = () => {
     navigate('/supporter/request')
   }
 
   return (
-    <div style={styles.page}>
-      {/* Header with user info and logout */}
-      <div style={styles.header}>
-        <div style={styles.headerLeft}>
-          <h1 style={styles.headerTitle}>支援内容の確認 / Confirm Support</h1>
-        </div>
-        <div style={styles.headerRight}>
-          <div style={styles.userInfo}>
-            <span style={styles.userInfoText}>ようこそ、{currentSupporterUser?.username}さん</span>
-            <button style={styles.logoutBtn} onClick={handleLogout}>
+    <div className="supporter-dashboard">
+      {/* Main Content */}
+      <div className="supporter-main-content">
+        {/* Header */}
+        <header className="supporter-dashboard-header">
+          <div className="supporter-header-left">
+            <h1>支援内容の確認 / Confirm Support</h1>
+          </div>
+          <div className="supporter-user-info">
+            <span>ようこそ、{currentSupporterUser?.username}さん</span>
+            <button className="supporter-logout-btn" onClick={handleLogout}>
               ログアウト / Logout
             </button>
           </div>
-        </div>
-      </div>
+        </header>
 
-      <div style={styles.container}>
-        {selectedItems.length === 0 ? (
-          <p style={styles.empty}>選択された商品がありません。</p>
-        ) : (
-          <div style={styles.list}>
-            {selectedItems.map((item) => (
-              <div key={item.product_id} style={styles.itemRow}>
-                <span style={styles.itemName}>{item.name}</span>
-                <span style={styles.itemQty}>{item.quantity}個</span>
+        {/* Content Area */}
+        <main className="supporter-content-area">
+          <div className="supporter-confirmation-card">
+            <h2>支援内容の確認 / Support Confirmation</h2>
+            <p>選択された商品と数量を確認してください。問題がなければ「支援を確定」ボタンを押してください。</p>
+
+            {selectedItems.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                <p>選択された商品がありません。</p>
+                <p>No items selected.</p>
               </div>
-            ))}
-            <div style={styles.totalRow}>
-              合計金額: <strong style={{ color: '#000' }}>{yen(total)}</strong>
+            ) : (
+              <div className="supporter-items-list">
+                {selectedItems.map((item, index) => (
+                  <div key={index} className="supporter-item-row">
+                    <span style={{ fontWeight: '600', color: '#333', fontSize: '16px' }}>
+                      {item.name}
+                    </span>
+                    <span style={{ fontWeight: '500', color: '#666', fontSize: '16px' }}>
+                      {item.quantity}個 / {yen(item.total)}
+                    </span>
+                  </div>
+                ))}
+                <div className="supporter-total-row">
+                  合計金額 / Total: <strong>{yen(total)}</strong>
+                </div>
+              </div>
+            )}
+
+            <div className="supporter-actions">
+              <button 
+                type="button" 
+                onClick={handleConfirm} 
+                className="supporter-btn-primary"
+                disabled={selectedItems.length === 0}
+              >
+                支援を確定 / Confirm Support
+              </button>
+              <button 
+                type="button" 
+                onClick={handleBack} 
+                className="supporter-btn-secondary"
+              >
+                戻る / Back
+              </button>
             </div>
           </div>
-        )}
-
-        <div style={styles.actions}>
-          <button type="button" onClick={handleConfirm} style={styles.primaryBtn}>
-            要請する
-          </button>
-          <button type="button" onClick={handleBack} style={styles.secondaryBtn}>
-            戻る
-          </button>
-        </div>
+        </main>
       </div>
     </div>
   );
@@ -104,124 +127,3 @@ function yen(n) {
     return `¥${Number(n || 0).toLocaleString()}`
   }
 }
-
-const styles = {
-  page: {
-    minHeight: '100vh', 
-    backgroundColor: '#BF0000', 
-    display: 'flex', 
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 32,
-  },
-  header: {
-    width: '100%',
-    maxWidth: 600,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '16px 24px',
-    background: '#FFFFFF',
-    borderRadius: 12,
-    marginBottom: 24,
-    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)',
-  },
-  headerLeft: {
-    flex: 1,
-  },
-  headerTitle: {
-    margin: 0,
-    fontSize: 20,
-    fontWeight: 700,
-    color: '#BF0000',
-  },
-  headerRight: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  userInfo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-  },
-  userInfoText: {
-    fontSize: 16,
-    fontWeight: 600,
-    color: '#333',
-  },
-  logoutBtn: {
-    padding: '8px 12px',
-    backgroundColor: '#BF0000',
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 700,
-    border: 'none',
-    borderRadius: 6,
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-  },
-  container: {
-    backgroundColor: '#fff', 
-    borderRadius: 12, 
-    padding: 24, 
-    width: '100%', 
-    maxWidth: 600,
-  },
-  empty: {
-    color: '#000', 
-    textAlign: 'center'
-  },
-  list: {
-    display: 'flex', 
-    flexDirection: 'column', 
-    gap: 12,
-  },
-  itemRow: {
-    display: 'flex', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    fontSize: 16, 
-    padding: 8, 
-    borderBottom: '1px solid #ccc', 
-    color: '#000',
-  },
-  itemName: {
-    fontWeight: 600,
-  },
-  itemQty: {
-    fontWeight: 500,
-  },
-  totalRow: {
-    marginTop: 20, 
-    fontSize: 18, 
-    fontWeight: 700, 
-    textAlign: 'right', 
-    color: '#000',
-  },
-  actions: {
-    marginTop: 32, 
-    display: 'flex', 
-    justifyContent: 'center', 
-    gap: 16,
-  },
-  primaryBtn: {
-    padding: '12px 24px', 
-    backgroundColor: '#BF0000', 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: 700, 
-    border: 'none', 
-    borderRadius: 8, 
-    cursor: 'pointer'
-  },
-  secondaryBtn: {
-    padding: '12px 24px', 
-    backgroundColor: '#fff', 
-    color: '#BF0000', 
-    fontSize: 16, 
-    fontWeight: 700, 
-    border: '2px solid #BF0000', 
-    borderRadius: 8, 
-    cursor: 'pointer'
-  },
-};
