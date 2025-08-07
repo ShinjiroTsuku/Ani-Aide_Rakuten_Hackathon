@@ -18,11 +18,16 @@ CREATE TABLE IF NOT EXISTS pet (
     amount TEXT NOT NULL
 );
 
+DROP TABLE IF EXISTS request;
+
 CREATE TABLE IF NOT EXISTS request (
     user_id INTEGER NOT NULL,
     item_id TEXT NOT NULL,
     amount TEXT NOT NULL
 );
+
+INSERT INTO request(user_id, item_id, amount) values(1, "izumiyashop:10000942", 2);
+INSERT INTO request(user_id, item_id, amount) values(1, "nyanzaq:10069565", 5);
 
 CREATE TABLE IF NOT EXISTS supply (
     user_id INTEGER NOT NULL,

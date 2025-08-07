@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import asyncio
 from typing import List
 from fastapi import APIRouter, HTTPException
@@ -69,8 +70,23 @@ async def fetch_rakuten_item(client: httpx.AsyncClient, item_code: str, delay_ms
 
 @router.get("/products/summary", response_model=List[ProductSummary])
 async def get_products_summary():
+    conn = sqlite3.connect('database/app.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM request')
+    req_list = cursor.fetchall()
+    orders = []
+    for req in req_list:
+        order = {
+            "user_id": req[0],
+            "item_code": req[1], 
+            "quantity": int(req[2])
+        }
+        orders.append(order)
+    conn.close()
     totals = defaultdict(int)
-    for order in dummy_orders:
+
+    print(req_list)
+    for order in orders:
         totals[order["item_code"]] += order["quantity"]
 
     async with httpx.AsyncClient() as client:

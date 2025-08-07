@@ -1,5 +1,6 @@
 import sys
 sys.path.append('../')
+from database import database
 
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
@@ -9,11 +10,8 @@ from datetime import datetime
 from .admin_backend import admin_main
 from app.api import login as supporter_login
 from starlette.middleware.sessions import SessionMiddleware
-import httpx
-
-from .admin_backend import admin_main
-from app.api import login as supporter_login
 from app.api import products
+import httpx
 
 app = FastAPI()
 
@@ -25,7 +23,7 @@ app.include_router(products.router, prefix="/supporter")
 
 from fastapi.middleware.cors import CORSMiddleware
 
-
+database.db_init()
 
 app.add_middleware(
     CORSMiddleware,
