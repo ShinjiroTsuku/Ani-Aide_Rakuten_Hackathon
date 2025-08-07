@@ -1,0 +1,358 @@
+.supporter-dashboard {
+  display: flex;
+  height: 100vh;
+  background: #fef7f7;
+}
+
+.supporter-sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #E60012 0%, #cc0010 100%);
+  color: white;
+  transition: width 0.3s ease;
+  overflow: hidden;
+}
+
+.supporter-sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid #cc0010;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.supporter-sidebar-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.supporter-nav-item {
+  width: 100%;
+  padding: 15px 20px;
+  background: transparent;
+  border: none;
+  color: #f0f0f0;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.supporter-nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.supporter-nav-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-left: 4px solid #ffffff;
+}
+
+.supporter-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.supporter-dashboard-header {
+  background: white;
+  padding: 20px 30px;
+  border-bottom: 1px solid #e1e5e9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.supporter-header-left h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #E60012;
+}
+
+.supporter-user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.supporter-user-info span {
+  color: #666;
+  font-size: 14px;
+}
+
+.supporter-logout-btn {
+  background: #E60012;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.supporter-logout-btn:hover {
+  background: #cc0010;
+}
+
+.supporter-content-area {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.supporter-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.supporter-product-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.supporter-product-card:hover {
+  transform: translateY(-2px);
+}
+
+.supporter-product-image {
+  background: #f6f6f6;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.supporter-product-image img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.supporter-product-body {
+  padding: 20px;
+}
+
+.supporter-product-name {
+  color: #333;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.supporter-product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.supporter-product-price {
+  color: #E60012;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.supporter-quantity-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.supporter-qty-btn {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  font-weight: bold;
+  background: #E60012;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.supporter-qty-btn:hover {
+  background: #cc0010;
+}
+
+.supporter-qty-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  min-width: 30px;
+  text-align: center;
+}
+
+.supporter-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.supporter-btn-primary {
+  padding: 12px 30px;
+  background: #E60012;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.supporter-btn-primary:hover {
+  background: #cc0010;
+}
+
+.supporter-btn-secondary {
+  padding: 12px 30px;
+  background: white;
+  color: #E60012;
+  border: 2px solid #E60012;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.supporter-btn-secondary:hover {
+  background: #E60012;
+  color: white;
+}
+
+.supporter-confirmation-card {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.supporter-items-list {
+  margin-bottom: 30px;
+}
+
+.supporter-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.supporter-total-row {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e1e5e9;
+  text-align: right;
+  font-size: 18px;
+  font-weight: 700;
+  color: #E60012;
+}
+
+.supporter-complete-card {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.supporter-status-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.supporter-helper-text {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+/* Loading and Error States */
+.supporter-loading {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.supporter-loading p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+.supporter-error {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dc3545;
+  color: #dc3545;
+}
+
+.supporter-error p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .supporter-dashboard-header {
+    padding: 15px 20px;
+  }
+  
+  .supporter-content-area {
+    padding: 20px;
+  }
+  
+  .supporter-products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .supporter-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .supporter-dashboard-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .supporter-content-area {
+    padding: 15px;
+  }
+} 
