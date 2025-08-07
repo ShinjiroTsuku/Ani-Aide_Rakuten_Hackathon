@@ -1,0 +1,137 @@
+/* src/components/victim/DashboardPage.css */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #BF0000;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logout-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #d32f2f;
+}
+
+.dashboard-nav {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.nav-button {
+  padding: 12px 24px;
+  font-size: 16px; /* JSXでは数値だが、CSSでは単位(px)が必要 */
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.primary-button {
+  background-color: #fff;
+  color: #BF0000;
+  border: 2px solid #BF0000;
+}
+
+.secondary-button {
+  background-color: #fff;
+  color: #BF0000;
+  border: 2px solid #BF0000;
+}
+
+.dashboard-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+  padding-top: 40px; /* ヘッダーとの間に余白 */
+  width: 100%;
+}
+
+.recent-requests {
+  width: 90%; /* 親要素の幅に合わせて広げる */
+  margin-top: 40px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.recent-requests h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.requests-table {
+  width: 100%;
+  overflow-x: auto; /* 表が画面からはみ出る場合にスクロール可能にする */
+}
+
+.requests-table table {
+  width: 100%;
+  border-collapse: collapse; /* セルのボーダーを結合 */
+}
+
+.requests-table th, .requests-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.requests-table thead tr {
+  background-color: #f8f9fa;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.status-badge.pending {
+  background-color: #ffc107; /* 待機中 */
+}
+
+.status-badge.completed {
+  background-color: #28a745; /* 完了 */
+}
+
+.status-badge.in-progress {
+  background-color: #007bff; /* 進行中 */
+}

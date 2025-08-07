@@ -3,34 +3,29 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
-function LoginPage() {
-  const [email, setEmail] = useState(''); // ★UserIDからEmailに変更
+function LoginPage({ onBack }) {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(''); // ★エラーメッセージ用のStateを追加
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleBack = () => navigate(-1);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // ★認証チェック
-    if (email === 'hanako@example.com' && password === 'cde123') {
-      // ログイン成功
-      console.log("ログイン成功");
-      setError('');
-      navigate('/victim/dashboard');
-    } else {
-      // ログイン失敗
-      console.log("ログイン失敗");
-      setError('IDまたはパスワードが間違っています。');
+    setTimeout(() => {
+      if (email === 'hanako@example.com' && password === 'cde123') {
+        setError('');
+        // Navigate to the dashboard after successful login, passing the email as state
+        navigate('/victim/dashboard', { state: { userEmail: email } });
+      } else {
+        setError('IDまたはパスワードが間違っています。');
+      }
       setIsLoading(false);
-    }
-  };
-
-  const handleBack = () => {
-    navigate('/');
+    }, 1000);
   };
 
   return (
@@ -40,59 +35,48 @@ function LoginPage() {
           <h2>被災者ログイン</h2>
           <p>Victim Login</p>
         </div>
-        
-        <form onSubmit={handleLogin} className="victim-login-form">
+        <form onSubmit={handleSubmit} className="victim-login-form">
           <div className="form-group">
-            <label htmlFor="email">メールアドレス / Email</label>
+            <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="メールアドレスを入力"
+              placeholder="hanako@example.com"
               required
               disabled={isLoading}
             />
           </div>
-          
           <div className="form-group">
-            <label htmlFor="password">パスワード / Password</label>
+            <label htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="パスワードを入力"
+              placeholder="cde123"
               required
               disabled={isLoading}
             />
           </div>
-          
-          {error && <div className="error-message">{error}</div>}
-          
+          {error && <p className="error-message">{error}</p>}
           <div className="form-actions">
             <button
               type="submit"
               className="login-button"
               disabled={isLoading || !email || !password}
             >
-              {isLoading ? 'ログイン中...' : 'ログイン / Login'}
+              {isLoading ? 'ログイン中...' : 'ログイン'}
             </button>
-            
-            <button
-              type="button"
-              className="back-button"
-              onClick={handleBack}
-              disabled={isLoading}
-            >
-              戻る / Back
+            <button type="button" className="back-button" onClick={handleBack} disabled={isLoading}>
+              戻る
             </button>
           </div>
         </form>
-        
         <div className="victim-login-footer">
-          <p>被災者アカウントでログインしてください</p>
-          <p>Please login with your victim account</p>
+          <p>被災者権限が必要です</p>
+          <p>Victim privileges required</p>
         </div>
       </div>
     </div>
