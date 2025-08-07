@@ -117,22 +117,22 @@ function AdminDashboard({ adminUser, onLogout }) {
             <div className="stats-grid">
               <div className="stat-card">
                 <h3>総要請数</h3>
-                <p className="stat-number">{stats.totalRequests}</p>
+                <p className="stat-number" style={{ color: '#E60012' }}>{stats.totalRequests}</p>
                 <p className="stat-label">Total Requests</p>
               </div>
               <div className="stat-card">
                 <h3>待機中</h3>
-                <p className="stat-number">{stats.pendingRequests}</p>
+                <p className="stat-number" style={{ color: '#856404' }}>{stats.pendingRequests}</p>
                 <p className="stat-label">Pending</p>
               </div>
               <div className="stat-card">
                 <h3>完了支援</h3>
-                <p className="stat-number">{stats.completedSupports}</p>
+                <p className="stat-number" style={{ color: '#155724' }}>{stats.completedSupports}</p>
                 <p className="stat-label">Completed</p>
               </div>
               <div className="stat-card">
                 <h3>活動避難所</h3>
-                <p className="stat-number">{stats.activeShelters}</p>
+                <p className="stat-number" style={{ color: '#0c5460' }}>{stats.activeShelters}</p>
                 <p className="stat-label">Active Shelters</p>
               </div>
             </div>
