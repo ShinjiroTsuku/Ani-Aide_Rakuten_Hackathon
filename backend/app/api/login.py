@@ -4,6 +4,7 @@ import sqlite3
 
 router = APIRouter()
 
+
 class LoginRequest(BaseModel):
     username_or_email: str
     password: str
@@ -21,9 +22,15 @@ def login(request: LoginRequest):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     else:
         if request.password == list(password[0])[0]:
+            cursor.execute('SELECT user_id FROM user WHERE email = ?', (request.username_or_email, ))
+            userid = cursor.fetchall()
+            #print(userid)
+            #request.session["userID"] = "test"
             return {"success": True, "message": "Login successful"}
         else:
             raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    conn.close()
 
 """
     # Hardcoded check for demo

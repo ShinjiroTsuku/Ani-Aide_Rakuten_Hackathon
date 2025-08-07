@@ -28,6 +28,9 @@ export default function LoginPage() {
         return
       }
 
+      const res2 = await fetch('http://localhost:8000/set_session');
+
+
       navigate('/supporter/request') // success → go to supporter page
     } catch (err) {
       setError('Network error')

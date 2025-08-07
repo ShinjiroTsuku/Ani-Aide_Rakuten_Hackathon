@@ -10,13 +10,19 @@ from datetime import datetime
 from .admin_backend import admin_main
 from database import database
 from app.api import login as supporter_login
+from starlette.middleware.sessions import SessionMiddleware
 
 
 app = FastAPI()
-app.include_router(admin_main.router)
+
+app.add_middleware(SessionMiddleware, secret_key="himitsunokagi")
+
+app.include_router(admin_main.router, prefix="/admin")
 app.include_router(supporter_login.router, prefix="/supporter")
 
 from fastapi.middleware.cors import CORSMiddleware
+
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,7 +31,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 # Data models
 class UserLogin(BaseModel):
@@ -79,6 +84,15 @@ database.db_init()
 @app.get("/")
 def read_root():
     return {"message": "Hello, FasAPI"}
+
+
+@app.get("/set_session")
+async def set_session(request):
+    #セッション変数の設定
+    print(request)
+    request.session["state"] = "test"
+    return 'session data set'
+
 
 @app.post("/auth/login", response_model=UserResponse)
 def login(user: UserLogin):

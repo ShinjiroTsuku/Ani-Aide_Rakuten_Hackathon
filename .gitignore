@@ -3,3 +3,5 @@ venv/
 vite-project/
 package.json
 package-lock.json
+backend/database/__pycache__
+backend/database/
