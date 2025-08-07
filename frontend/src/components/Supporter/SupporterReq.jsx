@@ -65,6 +65,7 @@ export default function SupporterReq() {
       .map(item => ({
         name: item.name,
         quantity: quantities[item.product_id],
+        item_id: item.product_id,
         price: item.price,
         total: item.price * quantities[item.product_id]
       }))

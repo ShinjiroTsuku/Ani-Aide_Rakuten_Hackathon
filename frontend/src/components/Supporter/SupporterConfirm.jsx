@@ -15,8 +15,34 @@ export default function SupporterConfirm() {
 
   const total = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const handleConfirm = () => {
-    navigate('/supporter/status?status=success') // 完了ページへ
+  const formattedItem = selectedItems.map( (item, index) => 
+    (
+      {
+        item_id: item.item_id,
+        amount: item.quantity
+      }
+    )
+  )
+
+  const handleConfirm = async () => {
+
+    try {
+      const res = await fetch('http://localhost:8000/supporter/products/confirm/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formattedItem),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.detail || 'ERROR')
+        return
+      }
+      navigate('/supporter/status?status=success') // success → go to supporter page
+
+    } catch (err) {
+      setError('Network error')
+    }
   }
 
 

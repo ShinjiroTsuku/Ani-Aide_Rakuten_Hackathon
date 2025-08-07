@@ -63,14 +63,12 @@ async def adminrequest():
 
     
 
-        if sum == 0:
-            status = 'pending'
-        elif sum / int(amount) < 1:
-            status = 'stop'
-            pendingRequests += 1
-        else:
+        if int(amount) == 0:
             status = 'completed'
             completedSupports += 1
+        else:
+            status = 'pending'
+            pendingRequests += 1
 
         tmp = {
                 "id": id,
@@ -83,6 +81,7 @@ async def adminrequest():
                 "status": status,
                 "date": date
             }
+            
         #print(int(amount) / sum)
         data.append(tmp)
         exists.append((user_id, item_id))

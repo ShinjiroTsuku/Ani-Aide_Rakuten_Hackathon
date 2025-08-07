@@ -76,6 +76,8 @@ async def get_products_summary():
     req_list = cursor.fetchall()
     orders = []
     for req in req_list:
+        if int(req[2]) == 0:
+            continue
         order = {
             "user_id": req[0],
             "item_code": req[1], 
@@ -111,3 +113,37 @@ async def get_products_summary():
         )
 
     return results
+
+class ConfirmData(BaseModel):
+        item_id: str
+        amount: int
+
+
+@router.post("/products/confirm")
+async def products_confirm_data(itemdata: List[ConfirmData]):
+    conn = sqlite3.connect('database/app.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM request')
+    for data in itemdata:
+        item_id = data.item_id 
+        amount = data.amount
+        cursor.execute('SELECT user_id, amount FROM request WHERE item_id = ?', (item_id,))
+        requests = cursor.fetchall()
+        print(requests)
+        for request in requests:
+            print('a')
+            req_amount = int(request[1])
+            if req_amount < amount:
+                amount = amount - req_amount
+                set_num = 0
+            else:
+                set_num = req_amount - amount
+                amount = 0
+                cursor.execute('UPDATE request SET amount = ? WHERE user_id = ? AND item_id = ?', (set_num, request[0], item_id))
+                conn.commit()
+                break
+    
+    conn.close()
+
+    return True
+
