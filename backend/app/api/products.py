@@ -1,4 +1,3 @@
-# app/api/products.py
 import os
 import asyncio
 from typing import List
@@ -6,8 +5,10 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import httpx
 from collections import defaultdict
+from dotenv import load_dotenv
 
 router = APIRouter()
+load_dotenv()
 
 dummy_orders = [
     {"user_id": 1, "item_code": "izumiyashop:10000942", "quantity": 2},
@@ -27,7 +28,7 @@ class ProductSummary(BaseModel):
     price: int
     total_requests: int
 
-RAKUTEN_APP_ID = os.getenv("RAKUTEN_APP_ID")
+RAKUTEN_APP_ID = os.getenv("APP_ID")
 RAKUTEN_SEARCH_ENDPOINT = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
 
 async def fetch_rakuten_item(client: httpx.AsyncClient, item_code: str):
@@ -40,6 +41,7 @@ async def fetch_rakuten_item(client: httpx.AsyncClient, item_code: str):
         "format": "json",
         "hits": 1,
     }
+
     try:
         resp = await client.get(RAKUTEN_SEARCH_ENDPOINT, params=params, timeout=10.0)
         resp.raise_for_status()
@@ -53,7 +55,9 @@ async def fetch_rakuten_item(client: httpx.AsyncClient, item_code: str):
         price = item.get("itemPrice")
         img_list = item.get("mediumImageUrls") or []
         img_url = img_list[0].get("imageUrl") if img_list else None
+    
         return {"name": name, "image_url": img_url, "price": price}
+
     except Exception as e:
         print(f"Rakuten API error for {item_code}: {e}")
         return {"name": None, "image_url": None, "price": None}
@@ -65,9 +69,13 @@ async def get_products_summary():
     for order in dummy_orders:
         totals[order["item_code"]] += order["quantity"]
 
+    rakuten_results = []
     async with httpx.AsyncClient() as client:
-        tasks = [fetch_rakuten_item(client, pid) for pid in totals.keys()]
-        rakuten_results = await asyncio.gather(*tasks)
+        for pid in totals.keys():
+            data = await fetch_rakuten_item(client, pid)
+            rakuten_results.append(data)
+            await asyncio.sleep(1)  # Delay to avoid hitting Rakuten API limit
+
 
     results = []
     for (pid, total_req), rakuten_data in zip(totals.items(), rakuten_results):
