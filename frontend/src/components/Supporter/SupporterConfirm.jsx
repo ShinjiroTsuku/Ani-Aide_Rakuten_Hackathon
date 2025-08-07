@@ -5,6 +5,14 @@ export default function SupporterConfirm() {
   const navigate = useNavigate();
   const selectedItems = location.state?.selectedItems || [];
 
+  // Get supporter user from location state or use default
+  const currentSupporterUser = location.state?.supporterUser || { username: 'Supporter' }
+
+  // Logout handler
+  const handleLogout = () => {
+    navigate('/supporter/login')
+  }
+
   const total = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleConfirm = () => {
@@ -18,9 +26,22 @@ export default function SupporterConfirm() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.container}>
-        <h2 style={styles.title}>支援内容の確認</h2>
+      {/* Header with user info and logout */}
+      <div style={styles.header}>
+        <div style={styles.headerLeft}>
+          <h1 style={styles.headerTitle}>支援内容の確認 / Confirm Support</h1>
+        </div>
+        <div style={styles.headerRight}>
+          <div style={styles.userInfo}>
+            <span style={styles.userInfoText}>ようこそ、{currentSupporterUser?.username}さん</span>
+            <button style={styles.logoutBtn} onClick={handleLogout}>
+              ログアウト / Logout
+            </button>
+          </div>
+        </div>
+      </div>
 
+      <div style={styles.container}>
         {selectedItems.length === 0 ? (
           <p style={styles.empty}>選択された商品がありません。</p>
         ) : (
@@ -60,22 +81,83 @@ function yen(n) {
 
 const styles = {
   page: {
-    minHeight: '100vh', backgroundColor: '#BF0000', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: 32,
+    minHeight: '100vh', 
+    backgroundColor: '#BF0000', 
+    display: 'flex', 
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 32,
+  },
+  header: {
+    width: '100%',
+    maxWidth: 600,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '16px 24px',
+    background: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 24,
+    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.08)',
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerTitle: {
+    margin: 0,
+    fontSize: 20,
+    fontWeight: 700,
+    color: '#BF0000',
+  },
+  headerRight: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  userInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+  },
+  userInfoText: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: '#333',
+  },
+  logoutBtn: {
+    padding: '8px 12px',
+    backgroundColor: '#BF0000',
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 700,
+    border: 'none',
+    borderRadius: 6,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
   },
   container: {
-    backgroundColor: '#fff', borderRadius: 12, padding: 24, width: '100%', maxWidth: 600,
-  },
-  title: {
-    fontSize: 24, fontWeight: 700, textAlign: 'center', marginBottom: 20,
+    backgroundColor: '#fff', 
+    borderRadius: 12, 
+    padding: 24, 
+    width: '100%', 
+    maxWidth: 600,
   },
   empty: {
-    color: '#000', textAlign: 'center'
+    color: '#000', 
+    textAlign: 'center'
   },
   list: {
-    display: 'flex', flexDirection: 'column', gap: 12,
+    display: 'flex', 
+    flexDirection: 'column', 
+    gap: 12,
   },
   itemRow: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 16, padding: 8, borderBottom: '1px solid #ccc', color: '#000',
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    fontSize: 16, 
+    padding: 8, 
+    borderBottom: '1px solid #ccc', 
+    color: '#000',
   },
   itemName: {
     fontWeight: 600,
@@ -84,15 +166,36 @@ const styles = {
     fontWeight: 500,
   },
   totalRow: {
-    marginTop: 20, fontSize: 18, fontWeight: 700, textAlign: 'right', color: '#000',
+    marginTop: 20, 
+    fontSize: 18, 
+    fontWeight: 700, 
+    textAlign: 'right', 
+    color: '#000',
   },
   actions: {
-    marginTop: 32, display: 'flex', justifyContent: 'center', gap: 16,
+    marginTop: 32, 
+    display: 'flex', 
+    justifyContent: 'center', 
+    gap: 16,
   },
   primaryBtn: {
-    padding: '12px 24px', backgroundColor: '#BF0000', color: '#fff', fontSize: 16, fontWeight: 700, border: 'none', borderRadius: 8, cursor: 'pointer'
+    padding: '12px 24px', 
+    backgroundColor: '#BF0000', 
+    color: '#fff', 
+    fontSize: 16, 
+    fontWeight: 700, 
+    border: 'none', 
+    borderRadius: 8, 
+    cursor: 'pointer'
   },
   secondaryBtn: {
-    padding: '12px 24px', backgroundColor: '#fff', color: '#BF0000', fontSize: 16, fontWeight: 700, border: '2px solid #BF0000', borderRadius: 8, cursor: 'pointer'
+    padding: '12px 24px', 
+    backgroundColor: '#fff', 
+    color: '#BF0000', 
+    fontSize: 16, 
+    fontWeight: 700, 
+    border: '2px solid #BF0000', 
+    borderRadius: 8, 
+    cursor: 'pointer'
   },
 };
