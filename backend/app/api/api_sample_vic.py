@@ -4,8 +4,12 @@ from fastapi.responses import HTMLResponse, JSONResponse
 import requests
 import concurrent.futures
 from pydantic import BaseModel
+import os 
 
 from database import database, requests as requests_table
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -26,7 +30,7 @@ CAT_BREEDS = ["スコティッシュフォールド", "マンチカン", "アメ
 DOG_SIZES = ["小型犬", "中型犬", "大型犬"]
 LIFE_STAGES = ["子犬", "成犬", "シニア"]
 
-# ★★★ 新しい選択肢を追加 ★★★
+
 ALLERGY_OPTIONS = {"yes": "アレルギー有", "no": "アレルギー無"}
 
 SUPPORT_CATEGORIES = {"food": "食べ物", "medicine": "薬・サプリ", "supplies": "生活用品", "toys": "おもちゃ"}
@@ -38,7 +42,6 @@ DOG_FOOD_MATRIX_ALLERGY = {
     "中型犬": {"子犬": {"code": "wwpc:10000355"}, "成犬": {"code": "wwpc:10000355"}, "シニア": {"code": "nyanzaq:10069564"}},
     "大型犬": {"子犬": {"code": "retailer:10062480"}, "成犬": {"code": "wwpc:10000355"}, "シニア": {"code": "nyanzaq:10069564"}}}
 
-# ★★★ 新しい一般食のリストを追加 ★★★
 DOG_FOOD_MATRIX_GENERAL = {
     "小型犬": {
         "子犬": {"code": "nyanzaq:10046889"}, "成犬": {"code": "nyanzaq:10020856"}, "シニア": {"code": "dog-kan:10014635"}
@@ -106,10 +109,10 @@ async def search_items(
     context.update({
         "request": request, "selected_animal": animal, "selected_breed": breed,
         "selected_dog_size": dog_size, "selected_life_stage": life_stage,
-        "selected_allergy": allergy_status, # ★追加
+        "selected_allergy": allergy_status, 
         "selected_category": category, "selected_sort": sort, "input_keyword": keyword})
 
-    # ★★★ 犬が選択された場合のロジックを修正 ★★★
+
     if animal == "犬":
         recommended_items = []
         target_matrix = None
