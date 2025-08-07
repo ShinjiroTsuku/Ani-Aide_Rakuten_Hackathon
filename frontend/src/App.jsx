@@ -1,35 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.jsx
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './components/HomePage';
+import LoginPage from './components/victim/LoginPage'; // パスはそのまま
+// 新しいコンポーネントをインポート
+import DashboardPage from './components/victim/DashboardPage';
+import RequestPage from './components/victim/RequestPage';
+import ConfirmPage from './components/victim/ConfirmPage';
+import CompletePage from './components/victim/CompletePage';
+import StatusPage from './components/victim/StatusPage';
+import SupporterLoginPage from './components/Supporter/LoginPage.jsx'
+import SupporterReq from './components/Supporter/SupporterReq.jsx'
+import SupporterConfirm from './components/Supporter/SupporterConfirm.jsx'
+import SupporterCompletePage from './components/Supporter/CompletePage.jsx'
+// Admin components
+import AdminLogin from './components/Admin/AdminLogin.jsx'
+import AdminDashboard from './components/Admin/AdminDashboard.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      
+      {/* Victim側のルーティング */}
+      <Route path="/victim">
+        <Route path="login" element={<LoginPage />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="request" element={<RequestPage />} />
+        <Route path="confirm" element={<ConfirmPage />} />
+        <Route path="complete" element={<CompletePage />} />
+        <Route path="status" element={<StatusPage />} />
+      </Route>
+      
+      {/* Supporter側のルーティング */}
+      <Route path="/supporter">
+        <Route path="login" element={<SupporterLoginPage />} />
+        <Route path="request" element={<SupporterReq />} />
+        <Route path="confirm" element={<SupporterConfirm />} />
+        <Route path="status" element={<SupporterCompletePage />} />
+      </Route>
+      
+      {/* Admin側のルーティング */}
+      <Route path="/admin">
+        <Route path="login" element={<AdminLogin />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;
