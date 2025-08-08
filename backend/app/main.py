@@ -11,6 +11,7 @@ from .admin_backend import admin_main
 from app.api import login as supporter_login
 from starlette.middleware.sessions import SessionMiddleware
 from app.api import products
+from app.api import api_sample_vic
 import httpx
 
 app = FastAPI()
@@ -20,6 +21,7 @@ app.add_middleware(SessionMiddleware, secret_key="himitsunokagi")
 app.include_router(admin_main.router, prefix="/admin")
 app.include_router(supporter_login.router, prefix="/supporter")
 app.include_router(products.router, prefix="/supporter")
+app.include_router(api_sample_vic.router, prefix="/api/victim")
 
 from fastapi.middleware.cors import CORSMiddleware
 

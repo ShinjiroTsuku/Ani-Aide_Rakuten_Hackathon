@@ -10,7 +10,7 @@ function StatusPage() {
 
   // Logout handler
   const handleLogout = () => {
-    navigate('/victim/login')
+    navigate('/')
   }
 
   return (

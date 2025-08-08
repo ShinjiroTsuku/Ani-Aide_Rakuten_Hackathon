@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
 import requests
@@ -9,18 +9,10 @@ import os
 from .database import database, requests as requests_table
 
 
-app = FastAPI()
+router = APIRouter()
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), "templates")
 templates = Jinja2Templates(directory=TEMPLATE_DIR)
-
-@app.on_event("startup")
-async def startup():
-    await database.connect()
-
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
 
 # --- データ定義 ---
 APP_ID = "1037063463336645372"
@@ -93,7 +85,8 @@ def fetch_items_in_parallel(item_codes):
         items = [item for item in results if item]
     return items
 
-@app.get("/", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 async def search_items(
     request: Request,
     animal: str = "",
@@ -165,7 +158,7 @@ async def search_items(
     return templates.TemplateResponse("index.html", context)
 
 # (get_item_detail, add_request_to_db APIエンドポイントは変更なし)
-@app.get("/api/item/{item_code:path}")
+@router.get("/api/item/{item_code:path}")
 async def get_item_detail(item_code: str):
     params = {"format": "json", "applicationId": APP_ID, "itemCode": item_code}
     item_detail = fetch_rakuten_item(params)
@@ -174,7 +167,7 @@ async def get_item_detail(item_code: str):
     else:
         return JSONResponse(content={"error": "Item not found"}, status_code=404)
 
-@app.post("/api/request")
+@router.post("/api/request")
 async def add_request_to_db(item: RequestItem):
     query = requests_table.insert().values(user_id=1, item_id=item.item_code, amount="1")
     try:
@@ -183,3 +176,70 @@ async def add_request_to_db(item: RequestItem):
     except Exception as e:
         print(f"データベース保存エラー: {e}")
         return JSONResponse(content={"status": "error", "message": "DB error"}, status_code=500)
+
+# JSON API endpoint for frontend
+@router.get("/api", response_class=JSONResponse)
+async def search_items_json(
+    animal: str = "",
+    breed: str = "",
+    dog_size: str = "",
+    life_stage: str = "",
+    allergy: str = "",
+    category: str = "",
+    keyword: str = "",
+    sort: str = "-reviewCount"
+):
+    items = []
+    
+    if animal == "犬":
+        recommended_items = []
+        target_matrix = None
+        
+        # 1. どのフードリストを使うか選択
+        if allergy == "yes":
+            target_matrix = DOG_FOOD_MATRIX_ALLERGY
+        elif allergy == "no":
+            target_matrix = DOG_FOOD_MATRIX_GENERAL
+        
+        # 2. 推薦リストを生成
+        if target_matrix and dog_size and life_stage:
+            # サイズとステージで1つに絞り込み
+            product = target_matrix.get(dog_size, {}).get(life_stage)
+            if product:
+                recommended_items = fetch_items_in_parallel([product["code"]])
+        elif target_matrix:
+            # サイズかステージが未選択の場合、リストの全商品を表示
+            all_codes = set(p["code"] for size in target_matrix.values() for p in size.values())
+            recommended_items = fetch_items_in_parallel(all_codes)
+        else:
+            # アレルギー有無が未選択の場合、両方のリストから代表的なものを表示
+            allergy_codes = set(p["code"] for size in DOG_FOOD_MATRIX_ALLERGY.values() for p in size.values())
+            general_codes = set(p["code"] for size in DOG_FOOD_MATRIX_GENERAL.values() for p in size.values())
+            recommended_items = fetch_items_in_parallel(list(allergy_codes | general_codes))
+        
+        items = recommended_items
+
+    # --- 犬以外が選択された場合：通常のキーワード検索ロジック ---
+    else:
+        search_terms = list(filter(None, [animal, breed, SUPPORT_CATEGORIES.get(category, ""), keyword]))
+        combined_keyword = " ".join(search_terms)
+
+        if combined_keyword:
+            params = {"format": "json", "applicationId": APP_ID, "keyword": combined_keyword, "sort": sort, "hits": 30}
+            url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
+            response = requests.get(url, params=params)
+            data = response.json()
+            for item in data.get("Items", []):
+                info = item["Item"]
+                items.append({
+                    "name": info["itemName"], 
+                    "url": info["itemUrl"], 
+                    "image": info["mediumImageUrls"][0]["imageUrl"].replace("?_ex=128x128", "") if info.get("mediumImageUrls") else "https://placehold.co/128x128?text=No+Image", 
+                    "price": info["itemPrice"], 
+                    "shop": info["shopName"], 
+                    "review_count": info.get("reviewCount", 0), 
+                    "review_average": float(info.get("reviewAverage", 0)), 
+                    "item_code": info["itemCode"]
+                })
+
+    return JSONResponse(content=items)

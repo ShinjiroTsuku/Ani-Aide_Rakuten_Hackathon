@@ -10,7 +10,7 @@ function LoginPage({ onBack }) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleBack = onBack || (() => navigate('/'))
+  const handleBack = () => navigate('/');
 
   const handleSubmit = (e) => {
     e.preventDefault();
